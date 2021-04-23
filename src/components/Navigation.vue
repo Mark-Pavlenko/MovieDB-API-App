@@ -2,9 +2,7 @@
   <nav class="nav">
 
     <router-link class="nav__logo" :to="{name: 'home'}" exact title="Vue.js — TMDb App">
-      <svg class="nav__logo-image">
-        <use xlink:href="#svgLogo"></use>
-      </svg>
+
     </router-link>
 
     <div class="nav__hamburger" @click="toggleNav">
@@ -16,14 +14,22 @@
       <li class="nav__item" v-for="item in listTypes" v-if="item.isCategory">
         <router-link class="nav__link" :to="{name: 'home-category', params: {category: item.query}}">
           <div class="nav__link-wrap">
-            <svg class="nav__link-icon">
-              <use :xlink:href="'#icon_' + item.query"></use>
-            </svg>
             <span class="nav__link-title">{{ item.shortTitle }}</span>
           </div>
         </router-link>
       </li>
-
+      <li class="nav__item nav__item--profile">
+        <div  class="nav__link nav__link--profile"  @click="requestToken" v-if="!userLoggedIn">
+          <div class="nav__link-wrap">
+            <span class="nav__link-title">Войти</span>
+          </div>
+        </div>
+        <router-link  class="nav__link nav__link--profile" :to="{name: 'profile'}" v-if="userLoggedIn">
+          <div class="nav__link-wrap">
+            <span class="nav__link-title">Профиль</span>
+          </div>
+        </router-link>
+      </li>
     </ul>
   </nav>
 </template>

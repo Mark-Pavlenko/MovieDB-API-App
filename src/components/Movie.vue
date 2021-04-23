@@ -1,7 +1,7 @@
 <template>
   <section class="movie">
     <div class="movie__container" v-if="movieLoaded">
-      <header class="movie__header" :class="{'movie__header--page': type=='page'}" :style="{ 'background-image': 'url(' + movieBackdropSrc + ')' }">
+      <header class="movie__header" :class="{'movie__header--page': type=='page'}" >
         <div class="movie__wrap movie__wrap--header" :class="{'movie__wrap--page': type=='page'}">
           <figure class="movie__poster">
             <img v-if="moviePosterSrc" class="movie__img" src="~assets/placeholder.png" v-img="moviePosterSrc">
@@ -19,12 +19,9 @@
         <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type=='page'}">
           <div class="movie__actions" v-if="userLoggedIn && favoriteChecked">
             <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}" @click.prevent="toggleFavorite">
-              <svg class="movie__actions-icon" :class="{'waiting' : favorite === ''}">
-                <use xlink:href="#iconFavorite"></use>
-              </svg>
               <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>
-              <span class="movie__actions-text" v-else-if="favorite">Marked as Favorite</span>
-              <span class="movie__actions-text" v-else>Mark as Favorite?</span>
+              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>
+              <span class="movie__actions-text" v-else>Отметить как Избранное?</span>
             </a>
           </div>
           <div class="movie__info">
@@ -34,7 +31,7 @@
             <div class="movie__details">
               <div v-if="movie.genres.length" class="movie__details-block">
                 <h2 class="movie__details-title">
-                  Genres
+                  Жанры
                 </h2>
                 <div class="movie__details-text">
                   {{ nestedDataToString(movie.genres) }}
@@ -42,10 +39,9 @@
               </div>
               <div v-if="movie.release_date" class="movie__details-block">
                 <h2 class="movie__details-title">
-                  Release Date
+                  Дата выхода
                 </h2>
                 <div class="movie__details-text" v-formatDate="movie.release_date"></div>
-<!--                <div class="movie__details-text" v-info="movie.adult"></div>-->
               </div>
             </div>
           </div>
@@ -85,7 +81,7 @@ export default {
   // },
   methods: {
     fetchMovie(id){
-      axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${storage.apiKey}&language=en-US`)
+      axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${storage.apiKey}&language=ru`)
       .then(function(resp){
           let movie = resp.data;
           this.movie = movie;

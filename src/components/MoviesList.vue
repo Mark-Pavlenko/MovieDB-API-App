@@ -6,7 +6,7 @@
         <h2 class="movies__title">{{ listTitle }}</h2>
         <span class="movies__results" v-if="!shortList">{{ countResults }}</span>
         <router-link v-if="shortList" class="movies__link" :to="{name: 'home-category', params: {category: category}}">
-          View All
+          Больше
         </router-link>
       </header>
 
@@ -22,8 +22,8 @@
     <i v-if="!listLoaded" class="loader"></i>
     <section v-if="!movies.length" class="not-found">
       <div class="not-found__content">
-        <h2 class="not-found__title" v-if="mode == 'search'">Nothing Found</h2>
-        <h2 class="not-found__title" v-if="mode == 'favorite'">You haven't added any favorite movies</h2>
+        <h2 class="not-found__title" v-if="mode == 'search'">Ничего нет"</h2>
+        <h2 class="not-found__title" v-if="mode == 'favorite'">У вас пока что нет любимых фильмов!</h2>
       </div>
     </section>
   </div>
@@ -66,11 +66,11 @@ export default {
     },
     request(){
       if(this.mode == 'search'){
-        return `https://api.themoviedb.org/3/search/movie?api_key=${storage.apiKey}&language=en-US&query=${this.query}&page=${this.currentPage}`;
+        return `https://api.themoviedb.org/3/search/movie?api_key=${storage.apiKey}&language=ru&query=${this.query}&page=${this.currentPage}`;
       }
       else if(this.mode == 'collection') {
         let caregory = this.$route.params.category || this.category;
-        return `https://api.themoviedb.org/3/movie/${caregory}?api_key=${storage.apiKey}&language=en-US&page=${this.currentPage}`;
+        return `https://api.themoviedb.org/3/movie/${caregory}?api_key=${storage.apiKey}&language=ru&page=${this.currentPage}`;
       }
       else if(this.mode == 'favorite') {
         return `https://api.themoviedb.org/3/account/${storage.userId}/favorite/movies?api_key=${storage.apiKey}&session_id=${storage.sessionId}&language=en-US&sort_by=created_at.desc&page=${this.currentPage}`;
@@ -78,9 +78,9 @@ export default {
     },
     countResults(){
       if(this.results > 1){
-        return numeral(this.results).format('0,0') + ' results';
+        return numeral(this.results).format('0,0') + ' фильма(ов)';
       } else {
-        return numeral(this.results).format('0,0') + ' result';
+        return numeral(this.results).format('0,0') + ' фильм';
       }
     }
   },
@@ -95,8 +95,8 @@ export default {
             this.results = 10;
           } else {
             this.movies = data.results;
-            this.pages = data.total_pages;
-            this.results = data.total_results;
+            // this.pages = data.total_pages;
+            // this.results = data.total_results;
           }
           this.listLoaded = true;
           // Change Page title

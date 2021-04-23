@@ -29,6 +29,13 @@ let routes = [
       'page-router-view': require('./components/MoviePage.vue')
     }
   },
+  {
+    name: 'profile',
+    path: '/profile',
+    components: {
+      'search-router-view': require('./components/Profile.vue')
+    }
+  },
 ];
 
 const router =  new VueRouter({

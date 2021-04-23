@@ -6,7 +6,7 @@
     <header class="header">
       <div class="header__search">
         <input class="header__search-input" type="text" v-model.trim="searchQuery" @keyup.enter="search" @blur="search"
-               placeholder="Search for a movie...">
+               placeholder="Введите название фильма...">
       </div>
     </header>
 
@@ -47,7 +47,24 @@ export default {
     }
   },
   methods: {
-    // Movie Popup Methods
+  //Profile methods
+    requestToken(){
+      storage.sessionId = null;
+      axios.get(`https://api.themoviedb.org/3/authentication/token/new?api_key=${storage.apiKey}&language=ru`)
+              .then(function(resp){
+                if(typeof resp.data == 'string') {
+                  resp.data = JSON.parse(resp.data);
+                }
+                let data = resp.data;
+                window.location.href = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=${location.protocol}//${location.host}/profile`
+              }.bind(this));
+    },
+    setUserStatus(){
+      storage.sessionId = localStorage.getItem('session_id') || null;
+      storage.userId = localStorage.getItem('user_id') || null;
+    },
+
+
     openMoviePopup(id, newMoviePopup) {
       if (newMoviePopup) {
         storage.backTitle = document.title;
