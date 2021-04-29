@@ -1,70 +1,145 @@
 <template>
-  <div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div
-          class="collapse navbar-collapse justify-content-end"
-          id="navbarNav"
-        >
-          <ul class="navbar-nav">
-            <li class="nav-item active">
-              <a class="nav-link" @click="logUserOut"> Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+  <section class="profile">
 
-    <section>
-      <div class="container mt-5">
-        <div class="row">
-          <div class="col-md-12">
-            <ul class="list-group">
-              <li class="list-group-item">Name : {{ user.name }}</li>
-              <li class="list-group-item">Email : {{ user.email }}</li>
-            </ul>
-          </div>
-        </div>
+    <div class="profile__content" v-if="userLoggedIn === true">
+      <header class="profile__header">
+        <h2 class="profile__title">Здравствуйте, {{ userName }} !</h2>
+        <button class="button" @click="logOut">Выйти</button>
+      </header>
+      <movies-list :type="'component'" :mode="'favorite'"></movies-list>
+      <created-lists></created-lists>
+    </div>
+
+<!--    <section class="not-found" v-if="userLoggedIn === false">-->
+      <section class="not-found" v-if="isToken == null ">
+      <div class="not-found__content">
+        <h2 class="not-found__title">Запрос на авторизацию отклонен</h2>
+        <button class="not-found__button button" @click="loginUser">Войти</button>
       </div>
     </section>
-  </div>
-</template>
-<script>
-import VueJwtDecode from "vue-jwt-decode";
-export default {
-  data() {
-    return {
-      user: {}
-    };
-  },
-  methods: {
-    getUserDetails() {
-      let token = localStorage.getItem("jwt");
-      let decoded = VueJwtDecode.decode(token);
-      this.user = decoded;
-    },
-    logUserOut() {
-      localStorage.removeItem("jwt");
-      this.$router.push("/login");
-    }
-  },
+  </section>
 
-  created() {
-    this.getUserDetails();
+</template>
+
+<script>
+  import axios from 'axios'
+  import storage from '../storage.js'
+  // import MoviesList from '../components/MoviesList'
+
+  export default {
+    // components: { MoviesList },
+    components: { },
+    data(){
+      return{
+        userLoggedIn: '',
+        userName: ''
+      }
+    },
+    methods: {
+     async isToken(){
+        let response = await this.$http.post("/user/login", this.login);
+        let token = response.data.token;
+        localStorage.setItem("jwt", token);
+      },
+      requestPermission(){
+        let query = location.search.substring(1);
+        if(query.length){
+          let params = query.split('&');
+          let token = params[0].split('=')[1];
+          let status = params[1].split('=')[0];
+          if(status == 'approved'){
+            this.createSession(token);
+          } else {
+            this.userLoggedIn = false;
+          }
+        } else {
+          this.userLoggedIn = false;
+        }
+      },
+      createSession(token){
+        axios.get(`https://api.themoviedb.org/3/authentication/session/new?api_key=${storage.apiKey}&request_token=${token}`)
+                .then(function(resp){
+                  let data = resp.data;
+                  if(data.success){
+                    let id = data.session_id;
+                    localStorage.setItem('session_id', id);
+                    eventHub.$emit('setUserStatus');
+                    this.userLoggedIn = true;
+                    this.getUserInfo();
+                  }
+                }.bind(this));
+      },
+      getUserInfo(){
+        axios.get(`https://api.themoviedb.org/3/account?api_key=${storage.apiKey}&session_id=${storage.sessionId}`)
+                .then(function(resp){
+                  let data = resp.data;
+                  this.userName = data.username;
+                  if (!localStorage.getItem('user_id')) localStorage.setItem('user_id', data.id);
+                }.bind(this))
+                .catch(function (error) {
+                  this.logOut();
+                }.bind(this));
+      },
+      loginUser(){
+        eventHub.$emit('requestToken');
+      },
+      logOut(){
+        localStorage.clear();
+        eventHub.$emit('setUserStatus');
+        this.$router.push({ name: 'home' });
+      }
+    },
+    created(){
+      document.title = 'Profile' + storage.pageTitlePostfix;
+      storage.backTitle = document.title;
+      if(!storage.sessionId){
+        this.requestPermission();
+      } else {
+        this.userLoggedIn = true;
+        this.getUserInfo();
+      }
+    }
   }
-};
 </script>
 
-<style scoped></style>
+<style lang="scss">
+  @import "./src/scss/variables";
+  @import "./src/scss/media-queries";
+  .profile{
+    &__content{
+      .wrapper{
+        min-height: calc(100vh - 175px);
+        @include tablet-min{
+          min-height: calc(100vh - 171px);
+        }
+      }
+    }
+    &__header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      border-bottom: 1px solid rgba($c-dark, 0.05);
+      @include tablet-min{
+        padding: 29px 30px;
+      }
+      @include tablet-landscape-min{
+        padding: 29px 50px;
+      }
+      @include desktop-min{
+        padding: 29px 60px;
+      }
+    }
+    &__title{
+      margin: 0;
+      font-size: 16px;
+      line-height: 16px;
+      color: $c-dark;
+      font-weight: 300;
+      @include tablet-min{
+        font-size: 18px;
+        line-height: 18px;
+      }
+    }
+  }
+</style>

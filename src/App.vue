@@ -27,6 +27,7 @@
 <script>
 import axios from 'axios'
 import storage from './storage.js'
+import token from '../server/config/auth'
 import Navigation from './components/Navigation.vue'
 import MoviePopup from './components/MoviePopup.vue'
 
@@ -49,15 +50,15 @@ export default {
   methods: {
   //Profile methods
     requestToken(){
-      storage.sessionId = null;
-      axios.get(`https://api.themoviedb.org/3/authentication/token/new?api_key=${storage.apiKey}&language=ru`)
-              .then(function(resp){
-                if(typeof resp.data == 'string') {
-                  resp.data = JSON.parse(resp.data);
-                }
-                let data = resp.data;
-                window.location.href = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=${location.protocol}//${location.host}/profile`
-              }.bind(this));
+      storage.sessionId = token();
+      // axios.get(`https://api.themoviedb.org/3/authentication/token/new?api_key=${storage.apiKey}&language=ru`)
+      //         .then(function(resp){
+      //           if(typeof resp.data == 'string') {
+      //             resp.data = JSON.parse(resp.data);
+      //           }
+      //           let data = resp.data;
+      //           window.location.href = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=${location.protocol}//${location.host}/profile`
+      //         }.bind(this));
     },
     setUserStatus(){
       storage.sessionId = localStorage.getItem('session_id') || null;

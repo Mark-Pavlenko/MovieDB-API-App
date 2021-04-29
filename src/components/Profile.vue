@@ -73,7 +73,7 @@ export default {
         this.logOut();
       }.bind(this));
     },
-    requestToken(){
+    loginUser(){
       eventHub.$emit('requestToken');
     },
     logOut(){

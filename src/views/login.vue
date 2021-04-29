@@ -63,6 +63,7 @@
           localStorage.setItem("jwt", token);
           if (token) {
             swal("Success", "Login Successful", "Error");
+            console.log("Our token: " + token);
             this.$router.push("/profile");
           }
         } catch (err) {
