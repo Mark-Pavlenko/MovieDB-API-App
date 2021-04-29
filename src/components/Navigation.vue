@@ -19,16 +19,23 @@
         </router-link>
       </li>
       <li class="nav__item nav__item--profile">
-        <div  class="nav__link nav__link--profile"  @click="requestToken" v-if="!userLoggedIn">
-          <div class="nav__link-wrap">
-            <span class="nav__link-title">Войти</span>
-          </div>
-        </div>
-        <router-link  class="nav__link nav__link--profile" :to="{name: 'profile'}" v-if="userLoggedIn">
-          <div class="nav__link-wrap">
-            <span class="nav__link-title">Профиль</span>
-          </div>
-        </router-link>
+
+      <li class="nav__item nav__item--profile">
+        <button v-if="!userLoggedIn" @click="goToLogin()">Войти</button>
+        <button v-if="userLoggedIn" to="/profile">Профиль</button>
+      </li>
+
+<!--        <div  class="nav__link nav__link&#45;&#45;profile"  @click="requestToken" v-if="!userLoggedIn">-->
+<!--          <div class="nav__link-wrap">-->
+<!--            <span class="nav__link-title">Войти</span>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <router-link  class="nav__link nav__link&#45;&#45;profile" :to="{name: 'profile'}" v-if="userLoggedIn">-->
+<!--          <div class="nav__link-wrap">-->
+<!--            <span class="nav__link-title">Профиль</span>-->
+<!--          </div>-->
+<!--        </router-link>-->
+
       </li>
     </ul>
   </nav>
@@ -45,6 +52,9 @@ export default {
     }
   },
   methods: {
+    goToLogin(){
+      this.$router.push('/login');
+    },
     setUserStatus(){
       this.userLoggedIn = storage.sessionId ? true : false;
     },
