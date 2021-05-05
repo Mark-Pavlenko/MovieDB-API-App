@@ -8,6 +8,7 @@
             <p>Для создания аккаунта, пожалуйста, заполните эту форму.</p>
             <hr />
           </div>
+
           <input
             type="text"
             id="name"
@@ -18,7 +19,7 @@
           <input
             type="email"
             id="email"
-            placeholder="Электронный адрес"
+            placeholder="Email"
             v-model="register.email"
             required
           />
@@ -33,7 +34,7 @@
 
           <center class="login-url">
             Уже зарегестрированы? Пожалуйста, авторизируйтесь
-            <router-link to="/login" class="signup__link"> здесь.</router-link>
+            <router-link to="/login" class="signup-link"> здесь.</router-link>
           </center>
         </div>
       </div>
@@ -190,7 +191,7 @@ a {
   text-align: center;
 }
 
-.signup__link {
+.signup-link {
   font-weight: 600;
   text-decoration: none;
 }
