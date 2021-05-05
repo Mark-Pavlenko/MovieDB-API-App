@@ -1,70 +1,78 @@
 <template>
   <div id="app">
-
     <navigation></navigation>
 
     <header class="header">
       <div class="header__search">
-        <input class="header__search-input" type="text" v-model.trim="searchQuery" @keyup.enter="search" @blur="search"
-               placeholder="Введите название фильма...">
+        <input
+          class="header__search-input"
+          type="text"
+          v-model.trim="searchQuery"
+          @keyup.enter="search"
+          @blur="search"
+          placeholder="Введите название фильма..."
+        />
       </div>
     </header>
 
-    <movie-popup v-if="moviePopupIsVisible" @close="closeMoviePopup" :id="moviePopupId"></movie-popup>
+    <movie-popup
+      v-if="moviePopupIsVisible"
+      @close="closeMoviePopup"
+      :id="moviePopupId"
+    ></movie-popup>
 
     <section class="main">
       <transition name="fade" @after-leave="afterLeave">
-        <router-view name="list-router-view" :type="'page'" :mode="'collection'"
-                     :key="$route.params.category"></router-view>
-        <router-view name="search-router-view" :type="'page'" :mode="'search'" :key="$route.params.query"></router-view>
+        <router-view
+          name="list-router-view"
+          :type="'page'"
+          :mode="'collection'"
+          :key="$route.params.category"
+        ></router-view>
+        <router-view
+          name="search-router-view"
+          :type="'page'"
+          :mode="'search'"
+          :key="$route.params.query"
+        ></router-view>
         <router-view name="page-router-view"></router-view>
       </transition>
     </section>
-
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-import storage from './storage.js'
-import token from '../server/config/auth'
-import Navigation from './components/Navigation.vue'
-import MoviePopup from './components/MoviePopup.vue'
+import axios from "axios";
+import storage from "./storage.js";
+import token from "../server/config/auth";
+import Navigation from "./components/Navigation.vue";
+import MoviePopup from "./components/MoviePopup.vue";
 
 export default {
-  name: 'app',
-  components: {Navigation,MoviePopup},
+  name: "app",
+  components: { Navigation, MoviePopup },
   data() {
     return {
       moviePopupIsVisible: false,
       moviePopupHistoryVisible: false,
       moviePopupId: 0,
-      searchQuery: ''
-    }
+      searchQuery: "",
+    };
   },
   computed: {
     queryForRouter() {
       return encodeURI(this.searchQuery.replace(/ /g, "+"));
-    }
+    },
   },
   methods: {
-  //Profile methods
-    requestToken(){
+    //Profile methods
+    requestToken() {
       storage.sessionId = token();
-      // axios.get(`https://api.themoviedb.org/3/authentication/token/new?api_key=${storage.apiKey}&language=ru`)
-      //         .then(function(resp){
-      //           if(typeof resp.data == 'string') {
-      //             resp.data = JSON.parse(resp.data);
-      //           }
-      //           let data = resp.data;
-      //           window.location.href = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=${location.protocol}//${location.host}/profile`
-      //         }.bind(this));
     },
-    setUserStatus(){
-      storage.sessionId = localStorage.getItem('session_id') || null;
-      storage.userId = localStorage.getItem('user_id') || null;
+    setUserStatus() {
+      storage.sessionId = localStorage.getItem("session_id") || null;
+      storage.userId = localStorage.getItem("user_id") || null;
     },
-
 
     openMoviePopup(id, newMoviePopup) {
       if (newMoviePopup) {
@@ -73,26 +81,28 @@ export default {
       storage.createMoviePopup = newMoviePopup;
       this.moviePopupIsVisible = true;
       this.moviePopupId = id;
-      document.querySelector('body').classList.add('hidden');
+      document.querySelector("body").classList.add("hidden");
     },
     closeMoviePopup() {
       storage.createMoviePopup = false;
       this.moviePopupIsVisible = false;
-      document.querySelector('body').classList.remove('hidden');
+      document.querySelector("body").classList.remove("hidden");
       window.history.back();
     },
     onHistoryState(e) {
-      storage.moviePopupOnHistory = e.state ? e.state.hasOwnProperty('popup') : false;
+      storage.moviePopupOnHistory = e.state
+        ? e.state.hasOwnProperty("popup")
+        : false;
       if (!storage.moviePopupOnHistory) {
         this.moviePopupIsVisible = false;
-        document.querySelector('body').classList.remove('hidden');
+        document.querySelector("body").classList.remove("hidden");
         document.title = storage.backTitle;
       }
     },
     changeHistoryState() {
       if (history.state && history.state.popup) {
         let newState = {
-          popup: false
+          popup: false,
         };
         history.replaceState(newState, null, storage.moviePath);
       }
@@ -100,37 +110,40 @@ export default {
     // Search Methods
     search() {
       if (!this.searchQuery.length) return;
-      this.$router.push({name: 'search', params: {query: this.queryForRouter}});
+      this.$router.push({
+        name: "search",
+        params: { query: this.queryForRouter },
+      });
     },
     setSearchQuery(clear) {
       if (clear) {
-        this.searchQuery = '';
+        this.searchQuery = "";
       } else {
         let query = decodeURIComponent(this.$route.params.query);
-        this.searchQuery = query ? query.replace(/\+/g, " ") : '';
+        this.searchQuery = query ? query.replace(/\+/g, " ") : "";
       }
     },
     // Router After Leave
     afterLeave() {
-      document.querySelector('body').scrollTop = 0;
+      document.querySelector("body").scrollTop = 0;
     },
     // Detect if touch device
     isTouchDevice() {
-      return 'ontouchstart' in document.documentElement;
-    }
+      return "ontouchstart" in document.documentElement;
+    },
   },
   created() {
-    window.addEventListener('popstate', this.onHistoryState);
-    window.addEventListener('pagehide', this.changeHistoryState);
-    eventHub.$on('openMoviePopup', this.openMoviePopup);
-    eventHub.$on('setSearchQuery', this.setSearchQuery);
-    eventHub.$on('requestToken', this.requestToken);
-    eventHub.$on('setUserStatus', this.setUserStatus);
+    window.addEventListener("popstate", this.onHistoryState);
+    window.addEventListener("pagehide", this.changeHistoryState);
+    eventHub.$on("openMoviePopup", this.openMoviePopup);
+    eventHub.$on("setSearchQuery", this.setSearchQuery);
+    eventHub.$on("requestToken", this.requestToken);
+    eventHub.$on("setUserStatus", this.setUserStatus);
     if (this.isTouchDevice()) {
-      document.querySelector('body').classList.add('touch');
+      document.querySelector("body").classList.add("touch");
     }
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
@@ -141,12 +154,13 @@ export default {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   line-height: 1.6;
   background: $c-light;
   color: $c-dark;
@@ -156,8 +170,10 @@ body {
   }
 }
 
-input, textarea, button {
-  font-family: 'Roboto', sans-serif;
+input,
+textarea,
+button {
+  font-family: "Roboto", sans-serif;
 }
 
 figure {
@@ -186,7 +202,7 @@ img {
   &:after {
     border: 5px solid $c-green;
     border-radius: 50%;
-    content: '';
+    content: "";
     left: 10px;
     position: absolute;
     top: 16px;
@@ -320,9 +336,9 @@ img {
   }
 }
 
-
 // router view transition
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition-property: opacity;
   transition-duration: 0.25s;
 }
@@ -331,7 +347,8 @@ img {
   transition-delay: 0.25s;
 }
 
-.fade-enter, .fade-leave-active {
-  opacity: 0
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
 }
 </style>

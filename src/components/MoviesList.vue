@@ -28,17 +28,23 @@
         v-if="!shortList"
         :class="{ 'is-hidden': currentPage == pages }"
       >
-        <button @click="loadMore" class="button">Load More</button>
+        <button @click="loadMore" class="button">Показать больше</button>
       </div>
     </div>
 
     <i v-if="!listLoaded" class="loader"></i>
     <section v-if="!movies.length" class="not-found">
       <div class="not-found__content">
-        <h2 class="not-found__title" v-if="mode == 'search'">Ничего нет"</h2>
-        <h2 class="not-found__title" v-if="mode == 'favorite'">
-          У вас пока что нет любимых фильмов!
-        </h2>
+        <center>
+          <h2 class="not-found__title" v-if="mode == 'search'">
+            По вашему запросу ничего не найдено!
+          </h2>
+        </center>
+        <center>
+          <h2 class="not-found__title" v-if="mode == 'favorite'">
+            У вас пока что нет любимых фильмов!
+          </h2>
+        </center>
       </div>
     </section>
   </div>
