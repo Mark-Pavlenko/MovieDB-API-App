@@ -1,31 +1,14 @@
 <template>
   <div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button
-                class="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#navbarNav"
-                aria-controls="navbarNav"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div
-                class="collapse navbar-collapse justify-content-end"
-                id="navbarNav"
-        >
-          <ul class="navbar-nav">
-            <li class="nav-item active">
-              <a class="nav-link" @click="logUserOut"> Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+
+    <div class="profile__content">
+      <header class="profile__header">
+        <h2 class="profile__title">Здравствуйте, {{ user.name }} !</h2>
+        <button class="button" @click="logUserOut">Выйти</button>
+      </header>
+      <movies-list :type="'component'" :mode="'favorite'"></movies-list>
+      <created-lists></created-lists>
+    </div>
 
     <section>
       <div class="container mt-5">
@@ -68,4 +51,44 @@
   };
 </script>
 
-<style scoped></style>
+<style lang="scss">
+  @import "./src/scss/variables";
+  @import "./src/scss/media-queries";
+  .profile{
+    &__content{
+      .wrapper{
+        min-height: calc(100vh - 175px);
+        @include tablet-min{
+          min-height: calc(100vh - 171px);
+        }
+      }
+    }
+    &__header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      border-bottom: 1px solid rgba($c-dark, 0.05);
+      @include tablet-min{
+        padding: 29px 30px;
+      }
+      @include tablet-landscape-min{
+        padding: 29px 50px;
+      }
+      @include desktop-min{
+        padding: 29px 60px;
+      }
+    }
+    &__title{
+      margin: 0;
+      font-size: 16px;
+      line-height: 16px;
+      color: $c-dark;
+      font-weight: 300;
+      @include tablet-min{
+        font-size: 18px;
+        line-height: 18px;
+      }
+    }
+  }
+</style>

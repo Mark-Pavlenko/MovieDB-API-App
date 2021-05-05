@@ -17,7 +17,7 @@
       </header>
       <div class="movie__main">
         <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type=='page'}">
-          <div class="movie__actions" v-if="userLoggedIn && favoriteChecked">
+          <div class="movie__actions" v-if="user">
             <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}" @click.prevent="toggleFavorite">
               <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>
               <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>
@@ -71,7 +71,8 @@ export default {
       movieBackdropSrc: '',
       userLoggedIn: storage.sessionId ? true : false,
       favoriteChecked: false,
-      favorite: ''
+      favorite: '',
+      user: ''
     }
   },
   // computed: {
@@ -150,6 +151,7 @@ export default {
   },
   created(){
     this.fetchMovie(this.id);
+    this.user = localStorage.getItem("jwt") ? true : false
   }
 }
 </script>
