@@ -22,13 +22,14 @@
 
       <li class="nav__item nav__item--profile">
 
-        <div  class="nav__link nav__link--profile"  @click="goToLogin()" v-if="!userLoggedIn">
-          <div class="nav__link-wrap">
+        <div  class="nav__link nav__link--profile"  @click="goToLogin()" v-if="!user">
+          <div class="nav__link-wrap" v-if="!user">
             <span class="nav__link-title">Войти</span>
           </div>
+
         </div>
 
-        <router-link  class="nav__link nav__link--profile" :to="{name: 'profile'}" v-if="userLoggedIn">
+        <router-link  class="nav__link nav__link--profile" :to="{name: 'profile'}" v-else>
           <div class="nav__link-wrap">
             <span class="nav__link-title">Профиль</span>
           </div>
@@ -47,7 +48,8 @@ export default {
   data(){
     return {
       listTypes: storage.listTypes,
-      userLoggedIn: storage.sessionId ? true : false
+      userLoggedIn: storage.sessionId ? true : false,
+      user: false
     }
   },
   methods: {
@@ -67,6 +69,8 @@ export default {
   },
   created(){
     eventHub.$on('setUserStatus', this.setUserStatus);
+    this.user = localStorage.getItem("jwt") ? true : false
+    console.log(this.user)
   }
 }
 </script>
