@@ -6,8 +6,8 @@
         <h2 class="profile__title">Здравствуйте, {{ user.name }} !</h2>
         <button class="button" @click="logUserOut">Выйти</button>
       </header>
-      <movies-list :type="'component'" :mode="'favorite'"></movies-list>
-      <created-lists></created-lists>
+<!--      <movies-list :type="'component'" :mode="'favorite'"></movies-list>-->
+<!--      <created-lists></created-lists>-->
     </div>
 
     <section>
