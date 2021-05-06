@@ -16,6 +16,15 @@
             v-model="register.name"
             required
           />
+
+          <input
+                  type="text"
+                  id="surname"
+                  placeholder="Фамилия"
+                  v-model="register.surname"
+                  required
+          />
+
           <input
             type="email"
             id="email"
@@ -49,6 +58,7 @@ export default {
     return {
       register: {
         name: "",
+        surname: "",
         email: "",
         password: "",
       },

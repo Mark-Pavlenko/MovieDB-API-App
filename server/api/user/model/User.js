@@ -5,6 +5,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, "Please Include your name"]
   },
+  surname: {
+    type: String,
+    required: [true, "Please Include your surname"]
+  },
   email: {
     type: String,
     required: [true, "Please Include your email"]
@@ -13,6 +17,13 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, "Please Include your password"]
   },
+  favouriteFilms: [
+    {
+      film:{
+        type: String
+      }
+    }
+  ],
   tokens: [
     {
       token: {
