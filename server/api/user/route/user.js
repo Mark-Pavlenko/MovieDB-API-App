@@ -8,6 +8,6 @@ router.post("/login", userController.loginUser);
 router.get("/me", auth, userController.getUserDetails);
 
 //insert film`s id into the db
-router.put('/addFilm',auth, userController.addFavouriteFilm);
+router.put('/addFilm/:id', userController.addFavouriteFilm);
 
 module.exports = router;

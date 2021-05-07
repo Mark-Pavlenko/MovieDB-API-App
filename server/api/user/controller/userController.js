@@ -45,11 +45,14 @@ exports.getUserDetails = async (req, res) => {
 
 //controller to add favourite film
 exports.addFavouriteFilm = async (req, res) => {
-  await res.json(req.userData);
-  console.log(req.userData);
   try {
-    let isFilm = await User.findOneAndUpdate({ favouriteFilms: req.body.favouriteFilms });
-    console.log(isFilm);
+    // console.log(req.body)
+    let isFilm = await User.findOne({ _id: req.body.id });
+    // console.log(isFilm);
+    // console.log(typeof req.body.favouriteFilms)
+    isFilm.favouriteFilms.push({film:req.body.favouriteFilms})
+    const updatedUser = await isFilm.save();
+    res.json(updatedUser);
   } catch (err) {
     res.status(400).json({ err: err });
   }

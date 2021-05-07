@@ -68,7 +68,7 @@ export default {
     async registerUser() {
       try {
         let response = await this.$http.post("/user/register", this.register);
-        console.log(response);
+        // console.log(response);
         let token = response.data.token;
         if (token) {
           localStorage.setItem("jwt", token);

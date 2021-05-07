@@ -10,19 +10,6 @@
 <!--      <created-lists></created-lists>-->
     </div>
 
-<!--    <section>-->
-<!--      <div class="container mt-5">-->
-<!--        <div class="row">-->
-<!--          <div class="col-md-12">-->
-<!--            <ul class="list-group">-->
-<!--              <li class="list-group-item">Name : {{ user.name }}</li>-->
-<!--              <li class="list-group-item">Email : {{ user.email }}</li>-->
-<!--              <li class="list-group-item">{{}}</li>-->
-<!--            </ul>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </section>-->
   </div>
 </template>
 

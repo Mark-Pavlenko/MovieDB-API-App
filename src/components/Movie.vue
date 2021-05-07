@@ -21,7 +21,7 @@
                     <div class="movie__actions" v-if="user">
 
                         <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}"
-                           @click="addFilm(id)">
+                           @click="addFilm(filmId)">
                             <!--              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>-->
                             <!--              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>-->
                             <span class="movie__actions-text">Отметить как Избранное?</span>
@@ -60,8 +60,6 @@
     import storage from '../storage.js'
     import img from '../directives/v-image.js'
     import formatDate from '../directives/v-formatDate.js'
-    // import userRotes from '../userRoutes'
-
 
     export default {
         props: ['id', 'type'],
@@ -78,26 +76,50 @@
                 userLoggedIn: storage.sessionId ? true : false,
                 favoriteChecked: false,
                 favorite: '',
-                user: ''
+                user: '',
+                filmId: this.id
             }
         },
         created() {
             this.fetchMovie(this.id);
-            this.addFilm(this.id)
+            // this.addFilm(this.filmId)
             this.user = localStorage.getItem("jwt") ? true : false
         },
         methods: {
             //get film`s id and insert it into the db
-            async addFilm(id){
-                console.log(id)
-                try{
-                    let responseFilm = await this.$http.put("/user/addFilm", this.id);
-                    console.log(responseFilm);
-                }catch(err){
+
+            async addFilm(filmId) {
+                try {
+                    console.log(filmId);
+                    const userId = JSON.parse(localStorage.getItem('user'))._id
+                    await this.$http.put(`/user/addFilm/${filmId}`, {id:userId,favouriteFilms:this.filmId})
+                        .then(response => {
+                            console.log(response)
+                        })
+                } catch (err) {
                     let error = err.response;
                     console.log(error);
                 }
             },
+            // async addFilm(filmId) {
+            //     console.log(filmId);
+            //         await axios.put(`http://localhost:4000/user/addFilm/${filmId}`, {filmId})
+            //             .then(response => {
+            //                 console.log(response)
+            //             })
+            //             .catch(error => {
+            //                 console.log(error);
+            //             })
+            //     },
+            // // let responseFilm = await this.$http.put(`http://localhost:4000/user/addFilm/${id}`, this.id);
+            // let responseFilm = await axios.put(`http://localhost:4000/user/addFilm`, {id}, {headers: {"Content-Type": "text/plain"}})
+            //     .then(r => console.log(r.status))
+
+            // } catch (err) {
+            //     let error = err.response;
+            //     console.log(error);
+            // }
+            // },
             // addFilm(id) {
             //     console.log(id)
             //     axios
@@ -165,15 +187,15 @@
                 return resultString;
             },
 
-            //if the film is already in favourite list
-            checkIfInFavorites(id) {
-                axios.get(`https://api.themoviedb.org/3/movie/${id}/account_states?api_key=${storage.apiKey}&session_id=${storage.sessionId}`)
-                    .then(function (resp) {
-                        this.favorite = resp.data.favorite;
-                        this.favoriteChecked = true;
-                        this.movieLoaded = true;
-                    }.bind(this))
-            },
+            // //if the film is already in favourite list
+            // checkIfInFavorites(id) {
+            //     axios.get(`https://api.themoviedb.org/3/movie/${id}/account_states?api_key=${storage.apiKey}&session_id=${storage.sessionId}`)
+            //         .then(function (resp) {
+            //             this.favorite = resp.data.favorite;
+            //             this.favoriteChecked = true;
+            //             this.movieLoaded = true;
+            //         }.bind(this))
+            // },
 
             //add film to favourite list
             toggleFavorite() {

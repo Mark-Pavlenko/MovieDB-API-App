@@ -64,9 +64,9 @@ export default {
   },
   methods: {
     //Profile methods
-    requestToken() {
-
-    },
+    // requestToken() {
+    //
+    // },
     setUserStatus() {
       storage.sessionId = localStorage.getItem("session_id") || null;
       storage.userId = localStorage.getItem("user_id") || null;
