@@ -1,4 +1,5 @@
 const User = require("../model/User");
+const express = require("express");
 
 exports.registerNewUser = async (req, res) => {
   try {
@@ -40,4 +41,16 @@ exports.loginUser = async (req, res) => {
 };
 exports.getUserDetails = async (req, res) => {
   await res.json(req.userData);
+};
+
+//controller to add favourite film
+exports.addFavouriteFilm = async (req, res) => {
+  await res.json(req.userData);
+  console.log(req.userData);
+  try {
+    let isFilm = await User.findOneAndUpdate({ favouriteFilms: req.body.favouriteFilms });
+    console.log(isFilm);
+  } catch (err) {
+    res.status(400).json({ err: err });
+  }
 };

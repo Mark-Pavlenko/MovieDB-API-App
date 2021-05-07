@@ -42,9 +42,7 @@
 </template>
 
 <script>
-import axios from "axios";
 import storage from "./storage.js";
-import token from "../server/config/auth";
 import Navigation from "./components/Navigation.vue";
 import MoviePopup from "./components/MoviePopup.vue";
 

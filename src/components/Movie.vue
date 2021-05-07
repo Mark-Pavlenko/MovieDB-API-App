@@ -20,10 +20,8 @@
                 <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type === 'page'}">
                     <div class="movie__actions" v-if="user">
 
-<!--                        <button class="movie__actions-link" @click="alertId(id)">Отметить как Избранное?</button>-->
-
                         <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}"
-                           @click.prevent="alertId(id)">
+                           @click="addFilm(id)">
                             <!--              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>-->
                             <!--              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>-->
                             <span class="movie__actions-text">Отметить как Избранное?</span>
@@ -62,6 +60,8 @@
     import storage from '../storage.js'
     import img from '../directives/v-image.js'
     import formatDate from '../directives/v-formatDate.js'
+    // import userRotes from '../userRoutes'
+
 
     export default {
         props: ['id', 'type'],
@@ -81,15 +81,48 @@
                 user: ''
             }
         },
-        // computed: {
-        //   loaded(){
-        //     return this.movieLoaded ? true : false;
-        //   }
-        // },
+        created() {
+            this.fetchMovie(this.id);
+            this.addFilm(this.id)
+            this.user = localStorage.getItem("jwt") ? true : false
+        },
         methods: {
-            alertId(id){
-              alert(id);
+            //get film`s id and insert it into the db
+            async addFilm(id){
+                console.log(id)
+                try{
+                    let responseFilm = await this.$http.put("/user/addFilm", this.id);
+                    console.log(responseFilm);
+                }catch(err){
+                    let error = err.response;
+                    console.log(error);
+                }
             },
+            // addFilm(id) {
+            //     console.log(id)
+            //     axios
+            //         .post(`http://localhost:4000/movie/${id}`, {id: id})
+            //         .then((response) => {
+            //             console.log(response);
+            //         }, (error) => {
+            //             console.log(error);
+            //         });
+            //     // fetch('/movie/' + this.id, {
+            //     //     method:'POST',
+            //     //     body: this.filmId,
+            //     //     headers: {
+            //     //         'Accept': 'application/json',
+            //     //         'Content-type': 'application/json'
+            //     //     }
+            //     // })
+            //     // .then(res =>res.json())
+            //     // .then(data => {
+            //     //     this.filmId = new Film()
+            //     // })
+            //     console.log(id);
+            // },
+
+            //output movie
             fetchMovie(id) {
                 axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${storage.apiKey}&language=ru`)
                     .then(function (resp) {
@@ -161,12 +194,9 @@
             id: function (val) {
                 this.fetchMovie(val);
             }
-        },
-        created() {
-            this.fetchMovie(this.id);
-            this.user = localStorage.getItem("jwt") ? true : false
         }
     }
+
 </script>
 
 <style lang="scss">

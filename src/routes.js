@@ -52,7 +52,7 @@ let routes = [
     components: {
       'search-router-view': require('./views/profile.vue')
     }
-  },
+  }
 ];
 
 const router =  new VueRouter({

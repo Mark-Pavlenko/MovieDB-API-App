@@ -3,35 +3,41 @@
 
     <div class="profile__content">
       <header class="profile__header">
-        <h2 class="profile__title">Здравствуйте, {{ user.name }} !</h2>
+        <h2 class="profile__title">Здравствуйте, {{ user.name + ' ' + user.surname}} !</h2>
         <button class="button" @click="logUserOut">Выйти</button>
       </header>
 <!--      <movies-list :type="'component'" :mode="'favorite'"></movies-list>-->
 <!--      <created-lists></created-lists>-->
     </div>
 
-    <section>
-      <div class="container mt-5">
-        <div class="row">
-          <div class="col-md-12">
-            <ul class="list-group">
-              <li class="list-group-item">Name : {{ user.name }}</li>
-              <li class="list-group-item">Email : {{ user.email }}</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
+<!--    <section>-->
+<!--      <div class="container mt-5">-->
+<!--        <div class="row">-->
+<!--          <div class="col-md-12">-->
+<!--            <ul class="list-group">-->
+<!--              <li class="list-group-item">Name : {{ user.name }}</li>-->
+<!--              <li class="list-group-item">Email : {{ user.email }}</li>-->
+<!--              <li class="list-group-item">{{}}</li>-->
+<!--            </ul>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </section>-->
   </div>
 </template>
 
 <script>
+
   import VueJwtDecode from "vue-jwt-decode";
   export default {
     data() {
       return {
-        user: {}
+        user: {},
+        favouriteFilms: []
       };
+    },
+    created() {
+      this.getUserDetails();
     },
     methods: {
       getUserDetails() {
@@ -44,10 +50,6 @@
         this.$router.push("/login");
       }
     },
-
-    created() {
-      this.getUserDetails();
-    }
   };
 </script>
 
