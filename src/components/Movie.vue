@@ -87,7 +87,6 @@
         },
         methods: {
             //get film`s id and insert it into the db
-
             async addFilm(filmId) {
                 try {
                     console.log(filmId);
