@@ -80,7 +80,7 @@ export default {
   },
   computed: {
     pageTitle() {
-      return this.listTitle + storage.pageTitlePostfix;
+      return this.listTitle;
     },
     query() {
       return this.$route.params.query || "";

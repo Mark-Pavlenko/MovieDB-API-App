@@ -11,12 +11,17 @@
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="list-group">
-                            <div v-for="film in user.favouriteFilms">{{film.film}}</div>
+                            <div v-for="favouriteFilm in user.favouriteFilms">{{favouriteFilm.film}}</div>
+
+<!--                            <movies-list v-for="item in listTypes" v-if="item.isCategory" :type="'component'" :mode="'collection'" :category="item.query" :shortList="true"></movies-list>-->
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
+
+<!--        <movies-list :type="'component'" :mode="'favorite'"></movies-list>-->
+<!--        <created-lists></created-lists>-->
 
     </div>
 
@@ -26,7 +31,9 @@
 
     import VueJwtDecode from "vue-jwt-decode";
     import axios from 'axios'
+    import MoviesListItem from "../components/MoviesList.vue";
     export default {
+        components: { MoviesListItem },
         data() {
             return {
                 user: {},
@@ -49,15 +56,7 @@
                 this.user = decoded;
             },
             async getFavouriteFilms() {
-                try {
-                    await this.$http.get(`/user/getFilms`, {favouriteFilms})
-                        .then(response => {
-                            console.log(response)
-                        })
-                } catch (err) {
-                    let error = err.response;
-                    console.log(error);
-                }
+
             },
             logUserOut() {
                 localStorage.removeItem("jwt");

@@ -91,7 +91,7 @@
                 try {
                     console.log(filmId);
                     const userId = JSON.parse(localStorage.getItem('user'))._id
-                    await this.$http.put(`/user/addFilm/${filmId}`, {id:userId,favouriteFilms:this.filmId})
+                    await this.$http.put(`/user/addFilm/${filmId}`, {id: userId, favouriteFilms: this.filmId})
                         .then(response => {
                             console.log(response)
                         })
@@ -100,48 +100,6 @@
                     console.log(error);
                 }
             },
-            // async addFilm(filmId) {
-            //     console.log(filmId);
-            //         await axios.put(`http://localhost:4000/user/addFilm/${filmId}`, {filmId})
-            //             .then(response => {
-            //                 console.log(response)
-            //             })
-            //             .catch(error => {
-            //                 console.log(error);
-            //             })
-            //     },
-            // // let responseFilm = await this.$http.put(`http://localhost:4000/user/addFilm/${id}`, this.id);
-            // let responseFilm = await axios.put(`http://localhost:4000/user/addFilm`, {id}, {headers: {"Content-Type": "text/plain"}})
-            //     .then(r => console.log(r.status))
-
-            // } catch (err) {
-            //     let error = err.response;
-            //     console.log(error);
-            // }
-            // },
-            // addFilm(id) {
-            //     console.log(id)
-            //     axios
-            //         .post(`http://localhost:4000/movie/${id}`, {id: id})
-            //         .then((response) => {
-            //             console.log(response);
-            //         }, (error) => {
-            //             console.log(error);
-            //         });
-            //     // fetch('/movie/' + this.id, {
-            //     //     method:'POST',
-            //     //     body: this.filmId,
-            //     //     headers: {
-            //     //         'Accept': 'application/json',
-            //     //         'Content-type': 'application/json'
-            //     //     }
-            //     // })
-            //     // .then(res =>res.json())
-            //     // .then(data => {
-            //     //     this.filmId = new Film()
-            //     // })
-            //     console.log(id);
-            // },
 
             //output movie
             fetchMovie(id) {
@@ -163,7 +121,7 @@
                             storage.createMoviePopup = false;
                         }
                         // Change Page title
-                        document.title = this.movie.title + storage.pageTitlePostfix;
+                        document.title = this.movie.title;
                     }.bind(this))
                     .catch(function (error) {
                         this.$router.push({name: '404'});
