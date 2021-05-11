@@ -11,15 +11,15 @@
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="list-group">
-                            <div v-for="favouriteFilm in this.arraysId">
-                                {{favouriteFilm.title}}
-                                {{favouriteFilm.id}}
+                            <ul class="movies__list">
+                                <movies-list-item class="movies__item" v-for="movie in arraysId" :movie ="movie "></movies-list-item>
+                            </ul>
 
-                                <ul class="movies__list">
-                                    <movies-list-item class="movies__item" v-for="movie in arraysId" :movie ="movie "></movies-list-item>
-                                </ul>
+<!--                            <div v-for="favouriteFilm in this.arraysId">-->
+<!--                                {{favouriteFilm.title}}-->
+<!--                                {{favouriteFilm.id}}-->
+<!--                            </div>-->
 
-                            </div>
                         </ul>
                     </div>
                 </div>
