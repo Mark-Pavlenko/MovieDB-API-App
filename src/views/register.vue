@@ -73,9 +73,9 @@ export default {
         if (token) {
           localStorage.setItem("jwt", token);
           this.$router.push("/login");
-          swal("Success", "Registration Was successful", "success");
+          swal("Ура!", "Регистрация прошла успешно.", "success");
         } else {
-          swal("Error", "Something Went Wrong", "Error");
+          swal("Ой-ой!", "Что-то пошло не так.", "Error");
         }
       } catch (err) {
         let error = err.response;

@@ -103,7 +103,7 @@
                         .then(response => {
                             console.log(response)
                         })
-                    swal("Success!", "\n" + "The movie was added to favorites.", "success");
+                    swal("Ура!", "\n" + "Фильм был успешно добавлен в избранное.", "success");
                     this.$router.push("/");
                 } catch (err) {
                     let error = err.response;

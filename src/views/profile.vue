@@ -8,11 +8,14 @@
 
         <section>
             <div class="container mt-5">
+
                 <div class="row">
+                    <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Избранные фильмы</h1>
                     <div class="col-md-12">
                         <ul class="list-group">
                             <ul class="movies__list">
-                                <movies-list-item class="movies__item" v-for="movie in arraysId" :movie ="movie "></movies-list-item>
+                                <movies-list-item class="movies__item" v-for="movie in arraysId"
+                                                  :movie="movie "></movies-list-item>
                             </ul>
                         </ul>
                     </div>
@@ -115,6 +118,10 @@
                 font-size: 18px;
                 line-height: 18px;
             }
+        }
+
+        .row .favouriteTitle {
+            text-align: center;
         }
     }
 </style>
