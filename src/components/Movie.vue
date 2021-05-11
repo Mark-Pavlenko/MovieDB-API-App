@@ -1,3 +1,4 @@
+<script src="../../server/index.js"></script>
 <template>
     <section class="movie">
         <div class="movie__container" v-if="movieLoaded">
@@ -25,6 +26,13 @@
                             <!--              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>-->
                             <!--              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>-->
                             <span class="movie__actions-text">Отметить как Избранное?</span>
+                        </a>
+
+                        <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}"
+                           @click="isFilmInFavourite(id)">
+                            <!--              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>-->
+                            <!--              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>-->
+                            <span class="movie__actions-text">film`s id</span>
                         </a>
 
                     </div>
@@ -82,7 +90,6 @@
         },
         created() {
             this.fetchMovie(this.id);
-            // this.addFilm(this.filmId)
             this.user = localStorage.getItem("jwt") ? true : false
         },
         methods: {
@@ -90,7 +97,7 @@
             async addFilm(filmId) {
                 try {
                     console.log(filmId);
-                    const userId = JSON.parse(localStorage.getItem('user'))._id
+                    const userId = JSON.parse(localStorage.getItem('user'))._id;
                     await this.$http.put(`/user/addFilm/${filmId}`, {id: userId, favouriteFilms: this.filmId})
                         .then(response => {
                             console.log(response)
@@ -101,6 +108,16 @@
                 }
             },
 
+            // check if film is in favourite
+            isFilmInFavourite(id){
+                let favouriteFilmId = JSON.parse(localStorage.getItem('user')).favouriteFilms;
+                for (let i = 0; i < favouriteFilmId.length; i++) {
+                    console.log(favouriteFilmId[i]._id);
+                    // if(favouriteFilmId[i]._id === id){
+                    //     console.log('Film is in favourite category!');
+                    // }
+                }
+            },
             //output movie
             fetchMovie(id) {
                 axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${storage.apiKey}&language=ru`)

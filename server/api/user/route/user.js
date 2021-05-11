@@ -11,6 +11,6 @@ router.get("/me", auth, userController.getUserDetails);
 router.put('/addFilm/:id', userController.addFavouriteFilm);
 
 //get all user`s favourite films
-router.get('/getFilms', userController.getFavouriteFilms);
+// router.get('/getFilms', userController.getFavouriteFilms);
 
 module.exports = router;

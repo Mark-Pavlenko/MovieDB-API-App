@@ -16,11 +16,7 @@
       </header>
 
       <ul class="movies__list">
-        <movies-list-item
-          class="movies__item"
-          v-for="(movie, index) in movies"
-          :movie="movie"
-        ></movies-list-item>
+        <movies-list-item class="movies__item" v-for="(movie, index) in movies" :movie="movie"></movies-list-item>
       </ul>
 
       <div
@@ -52,7 +48,6 @@
 
 <script>
 import axios from "axios";
-import numeral from "numeral";
 import storage from "../storage.js";
 import MoviesListItem from "./MoviesListItem.vue";
 

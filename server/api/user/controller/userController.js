@@ -51,10 +51,10 @@ exports.addFavouriteFilm = async (req, res) => {
     }
 };
 
-//controller to get favourite films
-exports.getFavouriteFilms = async (req, res) => {
-    await res.json(req.userData);
-};
+// //controller to get favourite films
+// exports.getFavouriteFilms = async (req, res) => {
+//     await res.json(req.userData);
+// };
 
 exports.getUserDetails = async (req, res) => {
     await res.json(req.userData);

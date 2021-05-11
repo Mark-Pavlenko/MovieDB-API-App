@@ -11,40 +11,56 @@
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="list-group">
-                            <div v-for="favouriteFilm in user.favouriteFilms">{{favouriteFilm.film}}</div>
-
-<!--                            <movies-list v-for="item in listTypes" v-if="item.isCategory" :type="'component'" :mode="'collection'" :category="item.query" :shortList="true"></movies-list>-->
-                        </ul>
+                            <div v-for="favouriteFilm in this.arraysId">
+                                {{favouriteFilm.title}}
+                                {{favouriteFilm.id}}<!--                                <div>{{info}}</div>-->
+<!--                                <ul class="movies__list">-->
+<!--                                    <movies-list-item class="movies__item" v-for="favouriteFilm in user.favouriteFilms" :favouriteFilm ="favouriteFilm.film "></movies-list-item>-->
+<!--                                </ul>-->
+                            </div>
+                         </ul>
                     </div>
                 </div>
             </div>
         </section>
-
-<!--        <movies-list :type="'component'" :mode="'favorite'"></movies-list>-->
-<!--        <created-lists></created-lists>-->
-
     </div>
 
 </template>
 
 <script>
-
     import VueJwtDecode from "vue-jwt-decode";
     import axios from 'axios'
     import MoviesListItem from "../components/MoviesList.vue";
+    import storage from "src/storage";
     export default {
+        props: ['id, movie'],
         components: { MoviesListItem },
         data() {
             return {
                 user: {},
-                favouriteFilms: ''
+                movie: {},
+                favouriteFilms: [],
+                info: null,
+                arraysId:[]
             };
         },
-        // mounted() {
-        //     axios
-        //         .get(`http://localhost:4000/user/getFilms`)
-        //         .then(response => (this.favouriteFilms = response));
-        // },
+        mounted() {
+            for (let film in this.user.favouriteFilms){
+                console.log(this.user.favouriteFilms[film])
+                let filmId = this.user.favouriteFilms[film]
+
+            axios
+                .get(`https://api.themoviedb.org/3/movie/${filmId.film}?api_key=${storage.apiKey}&language=ru`)
+                .then((response) => {
+                    this.info = response.data
+                    this.arraysId.push(response.data)
+
+
+                });
+
+            }
+            console.log(this.arraysId)
+        },
         created() {
             this.getUserDetails();
             this.getFavouriteFilms();
@@ -56,7 +72,6 @@
                 this.user = decoded;
             },
             async getFavouriteFilms() {
-
             },
             logUserOut() {
                 localStorage.removeItem("jwt");
@@ -69,7 +84,6 @@
 <style lang="scss">
     @import "./src/scss/variables";
     @import "./src/scss/media-queries";
-
     .profile {
         &__content {
             .wrapper {
@@ -79,7 +93,6 @@
                 }
             }
         }
-
         &__header {
             display: flex;
             align-items: center;
@@ -96,7 +109,6 @@
                 padding: 29px 60px;
             }
         }
-
         &__title {
             margin: 0;
             font-size: 16px;
