@@ -7,9 +7,11 @@
             <h2>Авторизация</h2>
             <hr />
           </div>
+
           <input
             type="text"
             id="email"
+            value="marik8998@gmail.com"
             placeholder="Email"
             v-model="login.email"
             required

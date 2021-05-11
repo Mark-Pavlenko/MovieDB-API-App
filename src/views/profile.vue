@@ -2,7 +2,7 @@
 
     <div class="profile__content">
         <header class="profile__header">
-            <h2 class="profile__title">Здравствуйте, {{ user.name + ' ' + user.surname}} !</h2>
+            <h2 class="profile__title">Здравствуйте, {{ user.name + ' ' + user.surname}}!</h2>
             <button class="button" @click="logUserOut">Выйти</button>
         </header>
 
