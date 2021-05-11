@@ -15,7 +15,7 @@
         </router-link>
       </header>
 
-      <ul class="movies__list">movie
+      <ul class="movies__list">
         <movies-list-item class="movies__item" v-for="(movie, index) in movies" :movie="movie"></movies-list-item>
       </ul>
 

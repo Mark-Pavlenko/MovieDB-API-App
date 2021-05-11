@@ -15,10 +15,6 @@
                                 <movies-list-item class="movies__item" v-for="movie in arraysId" :movie ="movie "></movies-list-item>
                             </ul>
 
-<!--                            <div v-for="favouriteFilm in this.arraysId">-->
-<!--                                {{favouriteFilm.title}}-->
-<!--                                {{favouriteFilm.id}}-->
-<!--                            </div>-->
 
                         </ul>
                     </div>
