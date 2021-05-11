@@ -10,7 +10,7 @@ router.get("/me", auth, userController.getUserDetails);
 //insert film`s id into the db
 router.put('/addFilm/:id', userController.addFavouriteFilm);
 
-//get all user`s favourite films
-// router.get('/getFilms', userController.getFavouriteFilms);
+//delete film`s id into the db
+router.delete('/removeFilm/:id', userController.removeFavouriteFilm);
 
 module.exports = router;

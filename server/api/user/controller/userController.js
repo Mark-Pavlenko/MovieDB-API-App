@@ -51,11 +51,19 @@ exports.addFavouriteFilm = async (req, res) => {
     }
 };
 
-// //controller to get favourite films
-// exports.getFavouriteFilms = async (req, res) => {
-//     await res.json(req.userData);
-// };
+//controller to remove all favourite films ???
+exports.removeFavouriteFilm = async (req, res) => {
+    try {
+        let isFilm = await User.findOne({_id: req.body.id});
+        isFilm.favouriteFilms.splice({film: req.body.favouriteFilms})
+        const updatedUser = await isFilm.save();
+        res.json(updatedUser);
+    } catch (err) {
+        res.status(400).json({err: err});
+    }
+};
 
+//get user details
 exports.getUserDetails = async (req, res) => {
     await res.json(req.userData);
 };

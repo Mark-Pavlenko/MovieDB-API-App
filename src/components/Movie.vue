@@ -22,16 +22,18 @@
                     <div class="movie__actions" v-if="user">
 
                         <div class="movie__actions-link" :class="{'active' : favorite === true}"
-                           @click="addFilm(filmId)">
-                            <!--              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>-->
-                            <!--              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>-->
+                             @click="addFilm(filmId)">
                             <span class="movie__actions-text">Отметить как Избранное?</span>
+                            <!--                            <span class="movie__actions-text" v-if="">Отмеченно как избранное</span>-->
                         </div>
 
                         <div class="movie__actions-link" :class="{'active' : favorite === true}"
-                           @click="isFilmInFavourite(id)">
-                            <!--              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>-->
-                            <!--              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>-->
+                             @click="removeFilm(filmId)">
+                            <span class="movie__actions-text">Удалить из избранного?</span>
+                        </div>
+
+                        <div class="movie__actions-link" :class="{'active' : favorite === true}"
+                             @click="isFilmInFavourite(id)">
                             <span class="movie__actions-text">film`s id</span>
                         </div>
 
@@ -94,7 +96,8 @@
             this.user = localStorage.getItem("jwt") ? true : false
         },
         methods: {
-            //get film`s id and insert it into the db
+
+            //add film to the db (pass film`s id)
             async addFilm(filmId) {
                 try {
                     console.log(filmId);
@@ -111,16 +114,43 @@
                 }
             },
 
-            // check if film is in favourite
-            isFilmInFavourite(id){
-                let favouriteFilmId = JSON.parse(localStorage.getItem('user')).favouriteFilms;
-                for (let i = 0; i < favouriteFilmId.length; i++) {
-                    console.log(favouriteFilmId[i]._id);
-                    // if(favouriteFilmId[i]._id === id){
-                    //     console.log('Film is in favourite category!');
-                    // }
+            async removeFilm(filmId) {
+                try {
+                    console.log(filmId);
+                    const userId = JSON.parse(localStorage.getItem('user'))._id;
+                    await this.$http.delete(`/user/removeFilm/${filmId}`, {
+                        data: {
+                            id: userId,
+                            favouriteFilms: this.filmId
+                        }
+                    })
+                        .then(response => {
+                            console.log(response)
+                        })
+                    swal("Ура!", "\n" + "Фильм был успешно удален из избранных!.", "success");
+                    this.$router.push("/");
+                } catch (err) {
+                    let error = err.response;
+                    console.log(error);
                 }
             },
+
+            // check if film is in favourite
+            isFilmInFavourite(filmId) {
+                let favouriteFilmId = JSON.parse(localStorage.getItem('user')).favouriteFilms;
+
+                console.log(`Film's id: ${filmId}`);
+
+                for (let i = 0; i < favouriteFilmId.length; i++) {
+                    console.log(`All favourite film's ids: ${favouriteFilmId[i].film}`);
+                    if (favouriteFilmId[i].film.includes(filmId)) {
+                        console.log('Includes');
+                    } else {
+                        console.log('Not Includes');
+                    }
+                }
+            },
+
             //output movie
             fetchMovie(id) {
                 axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${storage.apiKey}&language=ru`)
