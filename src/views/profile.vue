@@ -14,8 +14,6 @@
                             <ul class="movies__list">
                                 <movies-list-item class="movies__item" v-for="movie in arraysId" :movie ="movie "></movies-list-item>
                             </ul>
-
-
                         </ul>
                     </div>
                 </div>

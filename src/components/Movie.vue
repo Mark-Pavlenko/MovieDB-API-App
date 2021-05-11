@@ -21,19 +21,19 @@
                 <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type === 'page'}">
                     <div class="movie__actions" v-if="user">
 
-                        <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}"
+                        <div class="movie__actions-link" :class="{'active' : favorite === true}"
                            @click="addFilm(filmId)">
                             <!--              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>-->
                             <!--              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>-->
                             <span class="movie__actions-text">Отметить как Избранное?</span>
-                        </a>
+                        </div>
 
-                        <a href="#" class="movie__actions-link" :class="{'active' : favorite === true}"
+                        <div class="movie__actions-link" :class="{'active' : favorite === true}"
                            @click="isFilmInFavourite(id)">
                             <!--              <span class="movie__actions-text" v-if="favorite === ''">Wait...</span>-->
                             <!--              <span class="movie__actions-text" v-else-if="favorite">Отмеченно как избранное</span>-->
                             <span class="movie__actions-text">film`s id</span>
-                        </a>
+                        </div>
 
                     </div>
                     <div class="movie__info">
@@ -68,6 +68,7 @@
     import storage from '../storage.js'
     import img from '../directives/v-image.js'
     import formatDate from '../directives/v-formatDate.js'
+    import swal from "sweetalert"
 
     export default {
         props: ['id', 'type'],
@@ -102,6 +103,8 @@
                         .then(response => {
                             console.log(response)
                         })
+                    swal("Success!", "\n" + "The movie was added to favorites.", "success");
+                    this.$router.push("/");
                 } catch (err) {
                     let error = err.response;
                     console.log(error);
@@ -141,7 +144,7 @@
                         document.title = this.movie.title;
                     }.bind(this))
                     .catch(function (error) {
-                        this.$router.push({name: '404'});
+                        this.$router.push({name: 'home-category'});
                     }.bind(this));
             },
             poster() {

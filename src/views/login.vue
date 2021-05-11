@@ -58,7 +58,7 @@ export default {
         localStorage.setItem("jwt", token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         if (token) {
-          swal("Success", "Login Successful", "Error");
+          swal("Success", "Login Successful", "success");
           console.log("Our token: " + token);
           this.$router.push("/profile");
         }
