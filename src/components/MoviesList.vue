@@ -15,7 +15,7 @@
         </router-link>
       </header>
 
-      <ul class="movies__list">
+      <ul class="movies__list">movie
         <movies-list-item class="movies__item" v-for="(movie, index) in movies" :movie="movie"></movies-list-item>
       </ul>
 
@@ -117,8 +117,8 @@ export default {
         )
         .catch(
           function (error) {
-            this.$router.push({ name: "404" });
-          }.bind(this)
+            console.log(error);
+          }
         );
     },
     loadMore() {
