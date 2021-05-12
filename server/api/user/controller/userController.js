@@ -37,6 +37,7 @@ exports.loginUser = async (req, res) => {
         }
         const token = await user.generateAuthToken();
         res.status(201).json({user, token});
+
     } catch (err) {
         res.status(400).json({err: err});
     }
@@ -53,7 +54,6 @@ exports.addFavouriteFilm = async (req, res) => {
         res.status(400).json({err: err});
     }
 };
-
 
 //controller to remove all favourite films ???
 exports.removeFavouriteFilm = async (req, res) => {

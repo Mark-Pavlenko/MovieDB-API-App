@@ -24,7 +24,6 @@
                         <div class="movie__actions-link" :class="{'active' : favorite === true}"
                              @click="addFilm(filmId)">
                             <span class="movie__actions-text">Отметить как Избранное?</span>
-                            <!--                            <span class="movie__actions-text" v-if="">Отмеченно как избранное</span>-->
                         </div>
 
                         <div class="movie__actions-link" :class="{'active' : favorite === true}"
@@ -32,6 +31,7 @@
                             <span class="movie__actions-text">Удалить из избранного?</span>
                         </div>
 
+                        <!-- check if film is in favourite -->
                         <div class="movie__actions-link" :class="{'active' : favorite === true}"
                              @click="isFilmInFavourite(id)">
                             <span class="movie__actions-text">film`s id</span>
@@ -69,14 +69,9 @@
                 <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендованные фильмы</h1>
                 <div class="col-md-12">
                     <ul class="list-group">
-
-<!--                        <h2>Recommendations</h2>-->
-<!--                        <div v-for="rec in this.recs" :key="rec.id">-->
-<!--                            {{rec.id}}-->
-<!--                        </div>-->
-
                         <ul class="movies__list">
-                            <movies-list-item class="movies__item" v-for="movie in this.recs" :movie ="movie "></movies-list-item>
+                            <movies-list-item class="movies__item" v-for="movie in this.recs" :movie="movie ">
+                            </movies-list-item>
                         </ul>
                     </ul>
                 </div>

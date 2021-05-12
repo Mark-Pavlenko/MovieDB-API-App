@@ -39,24 +39,29 @@
             return {
                 user: {},
                 movie: {},
-                // favouriteFilms: [],
                 info: null,
                 arraysId: []
             };
         },
         mounted() {
+            if (localStorage.getItem('reloaded')) {
+                // The page was just reloaded. Clear the value from local storage
+                // so that it will reload the next time this page is visited.
+                localStorage.removeItem('reloaded');
+            } else {
+                // Set a flag so that we know not to reload the page twice.
+                localStorage.setItem('reloaded', '1');
+                location.reload();
+            };
             this.getUserDetails();
-        },
-        created() {
-
         },
         methods: {
             async getUserDetails() {
                 const userId = JSON.parse(localStorage.getItem('user'))._id;
                 console.log(userId)
-                await  this.$http.get(`user/getUser/${userId}`)
+                await this.$http.get(`user/getUser/${userId}`)
                     .then((response) => {
-                        this.user  = response.data
+                        this.user = response.data
                         for (let film in this.user.favouriteFilms) {
                             let filmId = this.user.favouriteFilms[film]
                             console.log(this.user)
@@ -69,10 +74,10 @@
                         console.log(this.arraysId)
                     });
             },
-
             logUserOut() {
                 localStorage.removeItem("jwt");
                 this.$router.push("/login");
+                document.location.reload();
             }
         },
     };
