@@ -42,32 +42,49 @@
                         <div v-if="movie.overview" class="movie__description">
                             {{ movie.overview }}
                         </div>
+
                         <div class="movie__details">
                             <div v-if="movie.genres.length" class="movie__details-block">
+
                                 <h2 class="movie__details-title">
                                     Жанры
                                 </h2>
+
                                 <div class="movie__details-text">
                                     {{ nestedDataToString(movie.genres) }}
                                 </div>
                             </div>
-                            <div v-if="movie.release_date" class="movie__details-block">
-                                <h2 class="movie__details-title">
-                                    Дата выхода
-                                </h2>
-                                <div class="movie__details-text" v-formatDate="movie.release_date"></div>
+
+                            <h2 class="movie__details-title">
+                                В главных ролях
+                            </h2>
+
+                            <div v-if="this.actorIds.length" class="actor__details-text">
+                                <div v-for="actor in this.actorIds.slice(0,10)" :key="actor"
+                                     class="movie__details-text">
+                                    {{ actor}}
+                                </div>
                             </div>
+                        </div>
+
+                        <div v-if="movie.release_date" class="movie__details-block">
+                            <h2 class="movie__details-title">
+                                Дата выхода
+                            </h2>
+                            <div class="movie__details-text" v-formatDate="movie.release_date"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </div>
 
-        <ul v-if="this.actorIds.length">
-            <ul v-for="(actor, index) in actorIds" :key="actor">
-                <span>{{actor}}</span>
-            </ul>
-        </ul>
+        <!--        <div v-if="this.actorIds.length">-->
+        <!--            <h2>В главных ролях</h2>-->
+        <!--            <ul v-for="actor in this.actorIds.slice(0,10)" :key="actor">-->
+        <!--                <span>{{actor}}</span>-->
+        <!--            </ul>-->
+        <!--        </div>-->
 
         <div class="container mt-5">
             <div class="row">
@@ -114,6 +131,7 @@
                 actorPosterSrc: '',
                 actorBackdropSrc: '',
                 actorIds: [],
+                mainActors: [],
 
                 favorite: '',
                 user: '',
@@ -208,12 +226,13 @@
                 axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${storage.apiKey}&language=ru`)
                     .then(function (resp) {
                         let actor = resp.data.cast;
-                        for (let i = 0; i < 15; i++) {
+                        for (let i = 0; i < actor.length; i++) {
                             if (actor[i].known_for_department === "Acting") {
-                                this.actorIds.push(actor[i].id);
+                                this.actorIds.push(actor[i].name);
                             }
                         }
                         console.log(this.actorIds);
+
                         // console.log(this.actor.cast.known_for_department);
                         // if(this.actor.cast.known_for_department === "Acting")
                         this.actor.cast = actor;
@@ -496,6 +515,14 @@
                 font-size: 14px;
                 margin-top: 5px;
             }
+        }
+
+        .actor__details-text {
+            /*color: red;*/
+            padding-top: 5px;
+            padding-bottom: 25px;
+            font-weight: 300;
+            font-size: 14px;
         }
     }
 </style>
