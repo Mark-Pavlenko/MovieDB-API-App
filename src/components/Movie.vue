@@ -63,6 +63,11 @@
             </div>
         </div>
 
+        <ul v-if="this.actorIds.length">
+            <ul v-for="(actor, index) in actorIds" :key="actor">
+                <span>{{actor}}</span>
+            </ul>
+        </ul>
 
         <div class="container mt-5">
             <div class="row">
@@ -87,11 +92,12 @@
     import img from '../directives/v-image.js'
     import formatDate from '../directives/v-formatDate.js'
     import swal from "sweetalert"
+    // import ActorsList from "components/ActorsList.vue";
     import MoviesListItem from './MoviesListItem.vue'
 
     export default {
         props: ['id', 'type'],
-        components: {MoviesListItem},
+        components: {/*ActorsList,*/ MoviesListItem},
         directives: {
             img: img,
             formatDate: formatDate
@@ -102,8 +108,13 @@
                 movieLoaded: false,
                 moviePosterSrc: '',
                 movieBackdropSrc: '',
-                userLoggedIn: storage.sessionId ? true : false,
-                favoriteChecked: false,
+
+                actor: {},
+                actorLoaded: false,
+                actorPosterSrc: '',
+                actorBackdropSrc: '',
+                actorIds: [],
+
                 favorite: '',
                 user: '',
                 filmId: this.id,
@@ -112,6 +123,7 @@
         },
         created() {
             this.fetchMovie(this.id);
+            this.fetchActors(this.id);
             this.user = localStorage.getItem("jwt") ? true : false
         },
         mounted() {
@@ -119,7 +131,6 @@
                 .then((response => (this.recs = response.data.results)));
         },
         methods: {
-
             //add film to the db (pass film`s id)
             async addFilm(filmId) {
                 try {
@@ -137,6 +148,7 @@
                 }
             },
 
+            //fix that
             async removeFilm(filmId) {
                 try {
                     console.log(filmId);
@@ -181,20 +193,34 @@
                         let movie = resp.data;
                         this.movie = movie;
                         this.poster();
-                        this.backdrop();
-                        if (this.userLoggedIn) {
-                            this.checkIfInFavorites(movie.id);
-                        } else {
-                            this.movieLoaded = true;
-                        }
-                        // Push state
-                        if (storage.createMoviePopup) {
-                            storage.moviePath = '/movie/' + id;
-                            history.pushState({popup: true}, null, storage.moviePath);
-                            storage.createMoviePopup = false;
-                        }
+                        this.movieBackdrop();
+                        this.movieLoaded = true;
                         // Change Page title
                         document.title = this.movie.title;
+                    }.bind(this))
+                    .catch(function (error) {
+                        this.$router.push({name: 'home-category'});
+                    }.bind(this));
+            },
+
+            //output actors
+            fetchActors(id) {
+                axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${storage.apiKey}&language=ru`)
+                    .then(function (resp) {
+                        let actor = resp.data.cast;
+                        for (let i = 0; i < 15; i++) {
+                            if (actor[i].known_for_department === "Acting") {
+                                this.actorIds.push(actor[i].id);
+                            }
+                        }
+                        console.log(this.actorIds);
+                        // console.log(this.actor.cast.known_for_department);
+                        // if(this.actor.cast.known_for_department === "Acting")
+                        this.actor.cast = actor;
+                        // console.log(actor);
+
+                        this.photo();
+                        this.actorBackdrop();
                     }.bind(this))
                     .catch(function (error) {
                         this.$router.push({name: 'home-category'});
@@ -205,9 +231,20 @@
                     this.moviePosterSrc = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + this.movie.poster_path;
                 }
             },
-            backdrop() {
+            photo() {
+                if (this.actor.profile_path) {
+                    this.actorPosterSrc = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + this.actor.profile_path;
+                    console.log(this.actorPosterSrc);
+                }
+            },
+            movieBackdrop() {
                 if (this.movie.backdrop_path) {
                     this.movieBackdropSrc = 'https://image.tmdb.org/t/p/w500' + this.movie.backdrop_path;
+                }
+            },
+            actorBackdrop() {
+                if (this.actor.profile_path) {
+                    this.actorBackdropSrc = 'https://image.tmdb.org/t/p/w500' + this.movie.profile_path;
                 }
             },
             nestedDataToString(data) {
@@ -215,36 +252,14 @@
                 data.forEach((item) => nestedArray.push(item.name));
                 resultString = nestedArray.join(', ');
                 return resultString;
-            },
-
-            // //if the film is already in favourite list
-            // checkIfInFavorites(id) {
-            //     axios.get(`https://api.themoviedb.org/3/movie/${id}/account_states?api_key=${storage.apiKey}&session_id=${storage.sessionId}`)
-            //         .then(function (resp) {
-            //             this.favorite = resp.data.favorite;
-            //             this.favoriteChecked = true;
-            //             this.movieLoaded = true;
-            //         }.bind(this))
-            // },
-
-            //add film to favourite list
-            toggleFavorite() {
-                let favoriteInvert = !this.favorite;
-                this.favorite = '';
-                axios.post(`https://api.themoviedb.org/3/account/${storage.userId}/favorite?api_key=${storage.apiKey}&session_id=${storage.sessionId}`, {
-                    'media_type': 'movie',
-                    'media_id': this.id,
-                    'favorite': favoriteInvert
-                })
-                    .then(function (resp) {
-                        this.favorite = favoriteInvert;
-                        eventHub.$emit('updateFavorite');
-                    }.bind(this));
             }
         },
         watch: {
             id: function (val) {
                 this.fetchMovie(val);
+            },
+            actorsId: function (val) {
+                this.fetchActors(val);
             }
         }
     }

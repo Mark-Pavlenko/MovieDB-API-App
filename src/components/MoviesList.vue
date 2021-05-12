@@ -22,7 +22,7 @@
       <div
         class="movies__nav"
         v-if="!shortList"
-        :class="{ 'is-hidden': currentPage == pages }"
+        :class="{ 'is-hidden': currentPage === pages }"
       >
         <button @click="loadMore" class="button">Показать больше</button>
       </div>
@@ -32,12 +32,12 @@
     <section v-if="!movies.length" class="not-found">
       <div class="not-found__content">
         <center>
-          <h2 class="not-found__title" v-if="mode == 'search'">
+          <h2 class="not-found__title" v-if="mode === 'search'">
             По вашему запросу ничего не найдено!
           </h2>
         </center>
         <center>
-          <h2 class="not-found__title" v-if="mode == 'favorite'">
+          <h2 class="not-found__title" v-if="mode === 'favorite'">
             У вас пока что нет любимых фильмов!
           </h2>
         </center>
@@ -51,14 +51,11 @@ import axios from "axios";
 import storage from "../storage.js";
 import MoviesListItem from "./MoviesListItem.vue";
 
-// Storage for removed favorite item
-let removed;
-
 export default {
   props: ["type", "mode", "category", "shortList"],
   components: { MoviesListItem },
   beforeRouteLeave(to, from, next) {
-    if (from.name == "search") {
+    if (from.name === "search") {
       eventHub.$emit("setSearchQuery", true);
     }
     next();
@@ -81,12 +78,12 @@ export default {
       return this.$route.params.query || "";
     },
     request() {
-      if (this.mode == "search") {
+      if (this.mode === "search") {
         return `https://api.themoviedb.org/3/search/movie?api_key=${storage.apiKey}&language=ru&query=${this.query}&page=${this.currentPage}`;
-      } else if (this.mode == "collection") {
+      } else if (this.mode === "collection") {
         let caregory = this.$route.params.category || this.category;
         return `https://api.themoviedb.org/3/movie/${caregory}?api_key=${storage.apiKey}&language=ru&page=${this.currentPage}`;
-      } else if (this.mode == "favorite") {
+      } else if (this.mode === "favorite") {
         return `https://api.themoviedb.org/3/account/${storage.userId}/favorite/movies?api_key=${storage.apiKey}&session_id=${storage.sessionId}&language=en-US&sort_by=created_at.desc&page=${this.currentPage}`;
       }
     },
@@ -110,7 +107,7 @@ export default {
             }
             this.listLoaded = true;
             // Change Page title
-            if (this.type == "page") {
+            if (this.type === "page") {
               document.title = this.pageTitle;
             }
           }.bind(this)
@@ -131,37 +128,6 @@ export default {
         }.bind(this)
       );
     },
-    updateFavorite() {
-      if (this.mode == "favorite") {
-        let promises = [],
-          movies = [],
-          pages,
-          results;
-        for (let i = 1; i <= this.currentPage; i++) {
-          promises.push(
-            axios.get(
-              `https://api.themoviedb.org/3/account/${storage.userId}/favorite/movies?api_key=${storage.apiKey}&session_id=${storage.sessionId}&language=en-US&sort_by=created_at.desc&page=${i}`
-            )
-          );
-        }
-        axios.all(promises).then(
-          function (results) {
-            results.forEach(function (resp) {
-              let data = resp.data;
-              movies = movies.concat(data.results);
-              pages = data.total_pages;
-              results = data.total_results;
-            });
-            this.movies = movies;
-            this.pages = pages;
-            if (this.currentPage > pages) {
-              this.currentPage -= 1;
-            }
-            this.results = results;
-          }.bind(this)
-        );
-      }
-    },
   },
   watch: {
     query(value) {
@@ -170,13 +136,13 @@ export default {
   },
   created() {
     // Set List Title
-    if (this.mode == "search") {
+    if (this.mode === "search") {
       this.listTitle = storage.categories["search"];
       eventHub.$emit("setSearchQuery");
-    } else if (this.mode == "collection") {
+    } else if (this.mode === "collection") {
       let caregory = this.$route.params.category || this.category;
       this.listTitle = storage.categories[caregory];
-    } else if (this.mode == "favorite") {
+    } else if (this.mode === "favorite") {
       this.listTitle = storage.categories["favorite"];
     }
     this.fetchCategory();
