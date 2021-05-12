@@ -45,12 +45,10 @@
             };
         },
         mounted() {
-
             this.getUserDetails();
-
         },
         created() {
-            this.getFavouriteFilms();
+
         },
         methods: {
             async getUserDetails() {
@@ -60,7 +58,6 @@
                     .then((response) => {
                         this.user  = response.data
                         for (let film in this.user.favouriteFilms) {
-                            // console.log(this.user.favouriteFilms[film])
                             let filmId = this.user.favouriteFilms[film]
                             console.log(this.user)
                             axios
@@ -74,13 +71,7 @@
 
                     })
             },
-            // getUserDetails() {
-            //     let token = localStorage.getItem("jwt");
-            //     let decoded = VueJwtDecode.decode(token);
-            //     this.user = decoded;
-            // },
-            async getFavouriteFilms() {
-            },
+
             logUserOut() {
                 localStorage.removeItem("jwt");
                 this.$router.push("/login");
