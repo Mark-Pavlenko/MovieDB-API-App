@@ -45,28 +45,40 @@
             };
         },
         mounted() {
-            for (let film in this.user.favouriteFilms) {
-                // console.log(this.user.favouriteFilms[film])
-                let filmId = this.user.favouriteFilms[film]
 
-                axios
-                    .get(`https://api.themoviedb.org/3/movie/${filmId.film}?api_key=${storage.apiKey}&language=ru`)
-                    .then((response) => {
-                        this.arraysId.push(response.data)
-                    });
-            }
-            // console.log(this.arraysId)
+            this.getUserDetails();
+
         },
         created() {
-            this.getUserDetails();
             this.getFavouriteFilms();
         },
         methods: {
-            getUserDetails() {
-                let token = localStorage.getItem("jwt");
-                let decoded = VueJwtDecode.decode(token);
-                this.user = decoded;
+            async getUserDetails() {
+                const userId = JSON.parse(localStorage.getItem('user'))._id;
+                console.log(userId)
+                await  this.$http.get(`user/getUser/${userId}`)
+                    .then((response) => {
+                        this.user  = response.data
+                        for (let film in this.user.favouriteFilms) {
+                            // console.log(this.user.favouriteFilms[film])
+                            let filmId = this.user.favouriteFilms[film]
+                            console.log(this.user)
+                            axios
+                                .get(`https://api.themoviedb.org/3/movie/${filmId.film}?api_key=${storage.apiKey}&language=ru`)
+                                .then((response) => {
+
+                                    this.arraysId.push(response.data)
+                                });
+                        }
+                        console.log(this.arraysId)
+
+                    })
             },
+            // getUserDetails() {
+            //     let token = localStorage.getItem("jwt");
+            //     let decoded = VueJwtDecode.decode(token);
+            //     this.user = decoded;
+            // },
             async getFavouriteFilms() {
             },
             logUserOut() {

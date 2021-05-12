@@ -9,6 +9,7 @@ router.get("/me", auth, userController.getUserDetails);
 
 //insert film`s id into the db
 router.put('/addFilm/:id', userController.addFavouriteFilm);
+router.get('/getUser/:id', userController.getUser);
 
 //delete film`s id into the db
 router.delete('/removeFilm/:id', userController.removeFavouriteFilm);

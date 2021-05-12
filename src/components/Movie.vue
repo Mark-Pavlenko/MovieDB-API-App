@@ -62,6 +62,10 @@
                 </div>
             </div>
         </div>
+        <h2>Recom</h2>
+        <div v-for="rec in this.recs" :key="rec.id">
+            {{rec.id}}
+        </div>
     </section>
 </template>
 
@@ -88,12 +92,19 @@
                 favoriteChecked: false,
                 favorite: '',
                 user: '',
-                filmId: this.id
+                filmId: this.id,
+                recs: null
             }
         },
         created() {
             this.fetchMovie(this.id);
             this.user = localStorage.getItem("jwt") ? true : false
+        },
+        mounted() {
+            let filmId
+            axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/recommendations?api_key=${storage.apiKey}&language=ru`)
+                .then((response => (this.recs = response.data.results)))
+
         },
         methods: {
 
@@ -107,7 +118,7 @@
                             console.log(response)
                         })
                     swal("Ура!", "\n" + "Фильм был успешно добавлен в избранное.", "success");
-                    this.$router.push("/");
+                    this.$router.push("/profile");
                 } catch (err) {
                     let error = err.response;
                     console.log(error);
@@ -128,7 +139,7 @@
                             console.log(response)
                         })
                     swal("Ура!", "\n" + "Фильм был успешно удален из избранных!.", "success");
-                    this.$router.push("/");
+                    this.$router.push("/profile");
                 } catch (err) {
                     let error = err.response;
                     console.log(error);

@@ -51,6 +51,8 @@ exports.addFavouriteFilm = async (req, res) => {
     }
 };
 
+
+
 //controller to remove all favourite films ???
 exports.removeFavouriteFilm = async (req, res) => {
     try {
@@ -66,4 +68,9 @@ exports.removeFavouriteFilm = async (req, res) => {
 //get user details
 exports.getUserDetails = async (req, res) => {
     await res.json(req.userData);
+};
+exports.getUser = async (req, res) => {
+    const updatedUser = await User.findOne({_id: req.params.id});
+    console.log(req.params.id)
+    return res.json(updatedUser);
 };
