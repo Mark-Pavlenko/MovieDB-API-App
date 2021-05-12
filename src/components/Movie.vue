@@ -59,8 +59,8 @@
                                 В главных ролях
                             </h2>
 
-                            <div v-if="this.actorIds.length" class="actor__details-text">
-                                <div v-for="actor in this.actorIds.slice(0,10)" :key="actor"
+                            <div v-if="this.actorNames.length" class="actor__details-text">
+                                <div v-for="actor in this.actorNames.slice(0,10)" :key="actor"
                                      class="movie__details-text">
                                     {{ actor}}
                                 </div>
@@ -77,7 +77,7 @@
                 </div>
             </div>
         </div>
-        </div>
+
 
         <!--        <div v-if="this.actorIds.length">-->
         <!--            <h2>В главных ролях</h2>-->
@@ -130,8 +130,7 @@
                 actorLoaded: false,
                 actorPosterSrc: '',
                 actorBackdropSrc: '',
-                actorIds: [],
-                mainActors: [],
+                actorNames: [],
 
                 favorite: '',
                 user: '',
@@ -228,10 +227,12 @@
                         let actor = resp.data.cast;
                         for (let i = 0; i < actor.length; i++) {
                             if (actor[i].known_for_department === "Acting") {
-                                this.actorIds.push(actor[i].name);
+                                this.actorNames.push(actor[i].name);
+                                // this.actorNames.push(actor[i].character);
                             }
                         }
-                        console.log(this.actorIds);
+                        console.log(this.actorNames);
+                        // console.log(this.actor);
 
                         // console.log(this.actor.cast.known_for_department);
                         // if(this.actor.cast.known_for_department === "Acting")
