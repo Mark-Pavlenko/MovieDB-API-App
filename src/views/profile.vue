@@ -7,8 +7,8 @@
         </header>
 
         <section>
-            <div class="container mt-5">
 
+            <div class="container mt-5">
                 <div class="row">
                     <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Избранные фильмы</h1>
                     <div class="col-md-12">
@@ -21,13 +21,13 @@
                     </div>
                 </div>
             </div>
+
         </section>
     </div>
 
 </template>
 
 <script>
-    import VueJwtDecode from "vue-jwt-decode";
     import axios from 'axios'
     import MoviesListItem from "../components/MoviesListItem.vue";
     import storage from "src/storage";
@@ -63,13 +63,11 @@
                             axios
                                 .get(`https://api.themoviedb.org/3/movie/${filmId.film}?api_key=${storage.apiKey}&language=ru`)
                                 .then((response) => {
-
                                     this.arraysId.push(response.data)
                                 });
                         }
                         console.log(this.arraysId)
-
-                    })
+                    });
             },
 
             logUserOut() {

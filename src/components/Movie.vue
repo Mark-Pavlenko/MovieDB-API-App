@@ -62,10 +62,27 @@
                 </div>
             </div>
         </div>
-        <h2>Recom</h2>
-        <div v-for="rec in this.recs" :key="rec.id">
-            {{rec.id}}
+
+
+        <div class="container mt-5">
+            <div class="row">
+                <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендованные фильмы</h1>
+                <div class="col-md-12">
+                    <ul class="list-group">
+
+<!--                        <h2>Recommendations</h2>-->
+<!--                        <div v-for="rec in this.recs" :key="rec.id">-->
+<!--                            {{rec.id}}-->
+<!--                        </div>-->
+
+                        <ul class="movies__list">
+                            <movies-list-item class="movies__item" v-for="movie in this.recs" :movie ="movie "></movies-list-item>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
         </div>
+
     </section>
 </template>
 
@@ -75,9 +92,11 @@
     import img from '../directives/v-image.js'
     import formatDate from '../directives/v-formatDate.js'
     import swal from "sweetalert"
+    import MoviesListItem from './MoviesListItem.vue'
 
     export default {
         props: ['id', 'type'],
+        components: {MoviesListItem},
         directives: {
             img: img,
             formatDate: formatDate
@@ -93,7 +112,7 @@
                 favorite: '',
                 user: '',
                 filmId: this.id,
-                recs: null
+                recs: []
             }
         },
         created() {
@@ -101,10 +120,8 @@
             this.user = localStorage.getItem("jwt") ? true : false
         },
         mounted() {
-            let filmId
             axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/recommendations?api_key=${storage.apiKey}&language=ru`)
-                .then((response => (this.recs = response.data.results)))
-
+                .then((response => (this.recs = response.data.results)));
         },
         methods: {
 

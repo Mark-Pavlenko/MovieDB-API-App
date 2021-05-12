@@ -1,5 +1,6 @@
 const User = require("../model/User");
 
+//registration controller
 exports.registerNewUser = async (req, res) => {
     try {
         let isUser = await User.find({email: req.body.email});
@@ -22,6 +23,8 @@ exports.registerNewUser = async (req, res) => {
         res.status(400).json({err: err});
     }
 };
+
+//authorization controller
 exports.loginUser = async (req, res) => {
     try {
         const email = req.body.email;
@@ -39,7 +42,7 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-//controller to add favourite film
+//add favourite film controller
 exports.addFavouriteFilm = async (req, res) => {
     try {
         let isFilm = await User.findOne({_id: req.body.id});
@@ -50,7 +53,6 @@ exports.addFavouriteFilm = async (req, res) => {
         res.status(400).json({err: err});
     }
 };
-
 
 
 //controller to remove all favourite films ???
@@ -65,12 +67,14 @@ exports.removeFavouriteFilm = async (req, res) => {
     }
 };
 
-//get user details
-exports.getUserDetails = async (req, res) => {
-    await res.json(req.userData);
-};
+
 exports.getUser = async (req, res) => {
     const updatedUser = await User.findOne({_id: req.params.id});
     console.log(req.params.id)
     return res.json(updatedUser);
+};
+
+// //get user details
+exports.getUserDetails = async (req, res) => {
+    await res.json(req.userData);
 };
