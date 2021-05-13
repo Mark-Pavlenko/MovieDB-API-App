@@ -21,7 +21,8 @@
     "vue": "^2.1.0",
     "vue-axios": "^1.2.2",
     "vue-jwt-decode": "^0.1.0",
-    "vue-router": "^2.2.1"
+    "vue-router": "^2.2.1",
+    "vue-star-rating": "^1.7.0"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

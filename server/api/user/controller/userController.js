@@ -43,11 +43,27 @@ exports.loginUser = async (req, res) => {
     }
 };
 
+//add rating to the film
+exports.addRating = async (req, res) => {
+    try {
+        let ratingFilm = await User.findOne({_id: req.body.id});
+        console.log(ratingFilm);
+        ratingFilm.ratingFilms.push({
+            film: req.body.favouriteFilms,
+            rating: req.body.ratingFilms
+        });
+        const ratingUser = await ratingFilm.save();
+        res.json(ratingUser);
+    } catch (err) {
+        res.sendStatus(400).json({err: err});
+    }
+};
+
 //add favourite film controller
 exports.addFavouriteFilm = async (req, res) => {
     try {
         let isFilm = await User.findOne({_id: req.body.id});
-        isFilm.favouriteFilms.push({film: req.body.favouriteFilms})
+        isFilm.favouriteFilms.push({film: req.body.favouriteFilms});
         const updatedUser = await isFilm.save();
         res.json(updatedUser);
     } catch (err) {
@@ -68,13 +84,13 @@ exports.removeFavouriteFilm = async (req, res) => {
 };
 
 
+// //get user details
 exports.getUser = async (req, res) => {
     const updatedUser = await User.findOne({_id: req.params.id});
     console.log(req.params.id)
     return res.json(updatedUser);
 };
 
-// //get user details
 exports.getUserDetails = async (req, res) => {
     await res.json(req.userData);
 };

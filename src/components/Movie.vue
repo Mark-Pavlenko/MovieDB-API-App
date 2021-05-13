@@ -37,6 +37,14 @@
                             <span class="movie__actions-text">film`s id</span>
                         </div>
 
+                        <star-rating
+                                class="movie__actions-link"
+                                :increment="0.01" :fixed-points="2"
+                                :rating="ratinged"
+                                @rating-selected="clickStarRating"
+                                @click="clickStarRating(clickStarRating)"
+                        />
+
                     </div>
                     <div class="movie__info">
                         <div v-if="movie.overview" class="movie__description">
@@ -62,7 +70,7 @@
                             <div v-if="this.actorNames.length" class="actor__details-text">
                                 <div v-for="actor in this.actorNames.slice(0,10)" :key="actor"
                                      class="movie__details-text">
-                                    {{ actor}}
+                                    {{ actor }}
                                 </div>
                             </div>
                         </div>
@@ -77,14 +85,6 @@
                 </div>
             </div>
         </div>
-
-
-        <!--        <div v-if="this.actorIds.length">-->
-        <!--            <h2>В главных ролях</h2>-->
-        <!--            <ul v-for="actor in this.actorIds.slice(0,10)" :key="actor">-->
-        <!--                <span>{{actor}}</span>-->
-        <!--            </ul>-->
-        <!--        </div>-->
 
         <div class="container mt-5">
             <div class="row">
@@ -109,12 +109,12 @@
     import img from '../directives/v-image.js'
     import formatDate from '../directives/v-formatDate.js'
     import swal from "sweetalert"
-    // import ActorsList from "components/ActorsList.vue";
+    import StarRating from "vue-star-rating";
     import MoviesListItem from './MoviesListItem.vue'
 
     export default {
         props: ['id', 'type'],
-        components: {/*ActorsList,*/ MoviesListItem},
+        components: {StarRating, MoviesListItem},
         directives: {
             img: img,
             formatDate: formatDate
@@ -153,7 +153,10 @@
                 try {
                     console.log(filmId);
                     const userId = JSON.parse(localStorage.getItem('user'))._id;
-                    await this.$http.put(`/user/addFilm/${filmId}`, {id: userId, favouriteFilms: this.filmId})
+                    await this.$http.put(`/user/addFilm/${filmId}`, {
+                        id: userId,
+                        favouriteFilms: this.filmId
+                    })
                         .then(response => {
                             console.log(response)
                         })
@@ -165,7 +168,33 @@
                 }
             },
 
-            //fix that
+
+            //get film rating
+            async clickStarRating(rating) {
+                try {
+                    const userId = JSON.parse(localStorage.getItem('user'))._id;
+                    const filmId = this.id;
+                    this.rating = rating;
+                    console.log(rating);
+                    console.log(filmId);
+                    console.log(userId);
+                    await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
+                        id: userId,
+                        favouriteFilms: this.filmId,
+                        ratingFilms: this.rating
+                    })
+                        .then(response => {
+                            console.log(response)
+                        })
+                    // swal("Ура!", "\n" + "Фильм был успешно добавлен в избранное.", "success");
+                    // this.$router.push("/profile");
+                } catch (err) {
+                    let error = err.response;
+                    console.log(error);
+                }
+            },
+
+            //fix that - delete all the films
             async removeFilm(filmId) {
                 try {
                     console.log(filmId);
@@ -231,7 +260,7 @@
                                 // this.actorNames.push(actor[i].character);
                             }
                         }
-                        console.log(this.actorNames);
+                        // console.log(this.actorNames);
                         // console.log(this.actor);
 
                         // console.log(this.actor.cast.known_for_department);

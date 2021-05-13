@@ -24,6 +24,16 @@ const userSchema = mongoose.Schema({
             }
         }
     ],
+    ratingFilms: [
+        {
+            film: {
+                type: String
+            },
+            rating: {
+                type: String
+            }
+        }
+    ],
     tokens: [
         {
             token: {
@@ -47,7 +57,14 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
     const token = jwt.sign(
-        {_id: user._id, name: user.name, surname: user.surname, email: user.email, favouriteFilms: user.favouriteFilms},
+        {
+            _id: user._id,
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            favouriteFilms: user.favouriteFilms,
+            ratingFilms: user.ratingFilms
+        },
         "secret"
     );
     user.tokens = user.tokens.concat({token});
