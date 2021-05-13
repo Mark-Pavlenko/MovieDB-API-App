@@ -26,10 +26,10 @@ const userSchema = mongoose.Schema({
     ],
     ratingFilms: [
         {
-            film: {
+            filmId: {
                 type: String
             },
-            rating: {
+            filmRating: {
                 type: String
             }
         }

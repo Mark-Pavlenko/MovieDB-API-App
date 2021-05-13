@@ -143,8 +143,17 @@
             this.fetchActors(this.id);
             this.user = localStorage.getItem("jwt") ? true : false
         },
+        computed:{
+            ratinged(){
+                console.log('text');
+                //from mounted all users from db arr
+            }
+        },
         mounted() {
             axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/recommendations?api_key=${storage.apiKey}&language=ru`)
+                .then((response => (this.recs = response.data.results)));
+            //get all users
+            axios.get()
                 .then((response => (this.recs = response.data.results)));
         },
         methods: {
@@ -179,14 +188,14 @@
                     console.log(filmId);
                     console.log(userId);
                     await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
-                        id: userId,
-                        favouriteFilms: this.filmId,
-                        ratingFilms: this.rating
+                        userId: userId,
+                        filmId: this.filmId,
+                        filmRating: this.rating
                     })
                         .then(response => {
-                            console.log(response)
+                            console.log(response.data)
                         })
-                    // swal("Ура!", "\n" + "Фильм был успешно добавлен в избранное.", "success");
+                    swal("Ура!", "\n" + "Рейтинг был успешно поставлен фильму!.", "success");
                     // this.$router.push("/profile");
                 } catch (err) {
                     let error = err.response;

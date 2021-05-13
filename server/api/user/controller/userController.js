@@ -46,14 +46,32 @@ exports.loginUser = async (req, res) => {
 //add rating to the film
 exports.addRating = async (req, res) => {
     try {
-        let ratingFilm = await User.findOne({_id: req.body.id});
-        console.log(ratingFilm);
-        ratingFilm.ratingFilms.push({
-            film: req.body.favouriteFilms,
-            rating: req.body.ratingFilms
-        });
-        const ratingUser = await ratingFilm.save();
-        res.json(ratingUser);
+        const userId = req.body._id;
+        const {filmId, filmRating} = req.body;
+        // console.log(userId);
+        console.log(filmId);
+        console.log(filmRating);
+        let ratingUser = await User.findOne({userId});
+        // console.log(ratingUser);
+
+        if (ratingUser) {
+            if (ratingUser.ratingFilms.length > 0) {
+                for (let i of ratingUser.ratingFilms) {
+                    if (i.filmId === filmId) {
+                        i.filmRating = filmRating;
+                        const updatedUser = await ratingUser.save();
+                        console.log(updatedUser);
+                        return res.json({ratingUser: updatedUser, message: `fILM NAME ALREADY EXIST ${filmRating}`})
+                    }
+                }
+            }
+            ratingUser.ratingFilms.push({
+                filmId: req.body.filmId,
+                filmRating: req.body.filmRating
+            });
+            const ratingFilm = await ratingUser.save();
+            res.json(ratingFilm);
+        }
     } catch (err) {
         res.sendStatus(400).json({err: err});
     }
@@ -62,9 +80,9 @@ exports.addRating = async (req, res) => {
 //add favourite film controller
 exports.addFavouriteFilm = async (req, res) => {
     try {
-        let isFilm = await User.findOne({_id: req.body.id});
-        isFilm.favouriteFilms.push({film: req.body.favouriteFilms});
-        const updatedUser = await isFilm.save();
+        let isUser = await User.findOne({_id: req.body.id});
+        isUser.favouriteFilms.push({film: req.body.favouriteFilms});
+        const updatedUser = await isUser.save();
         res.json(updatedUser);
     } catch (err) {
         res.status(400).json({err: err});
