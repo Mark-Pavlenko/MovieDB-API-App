@@ -59,6 +59,7 @@ export default {
         let token = response.data.token;
         localStorage.setItem("jwt", token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
+        localStorage.setItem("userId", JSON.stringify(response.data.user._id));
         if (token) {
           swal("Ура!", "Авторизация прошла успешно.", "success");
           console.log("Our token: " + token);

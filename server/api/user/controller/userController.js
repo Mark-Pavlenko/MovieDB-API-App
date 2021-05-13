@@ -46,13 +46,14 @@ exports.loginUser = async (req, res) => {
 //add rating to the film
 exports.addRating = async (req, res) => {
     try {
-        const userId = req.body._id;
-        const {filmId, filmRating} = req.body;
-        // console.log(userId);
+        const {userId, filmId, filmRating} = req.body;
+        console.log(userId);
         console.log(filmId);
         console.log(filmRating);
-        let ratingUser = await User.findOne({userId});
-        // console.log(ratingUser);
+
+        //fix this
+        let ratingUser = await User.findById(userId);
+        console.log(ratingUser);
 
         if (ratingUser) {
             if (ratingUser.ratingFilms.length > 0) {
@@ -73,7 +74,7 @@ exports.addRating = async (req, res) => {
             res.json(ratingFilm);
         }
     } catch (err) {
-        res.sendStatus(400).json({err: err});
+        console.log(err);
     }
 };
 
@@ -93,6 +94,7 @@ exports.addFavouriteFilm = async (req, res) => {
 exports.removeFavouriteFilm = async (req, res) => {
     try {
         let isFilm = await User.findOne({_id: req.body.id});
+        console.log('User id:' + isFilm._id);
         isFilm.favouriteFilms.splice({film: req.body.favouriteFilms})
         const updatedUser = await isFilm.save();
         res.json(updatedUser);

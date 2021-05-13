@@ -184,13 +184,14 @@
                     const userId = JSON.parse(localStorage.getItem('user'))._id;
                     const filmId = this.id;
                     this.rating = rating;
-                    console.log(rating);
-                    console.log(filmId);
                     console.log(userId);
+                    console.log(filmId);
+                    console.log(rating);
+
                     await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
-                        userId: userId,
+                        filmRating: this.rating,
                         filmId: this.filmId,
-                        filmRating: this.rating
+                        userId
                     })
                         .then(response => {
                             console.log(response.data)

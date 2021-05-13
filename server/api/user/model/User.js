@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const userSchema = mongoose.Schema({
+    userId:{
+        type: String,
+    },
     name: {
         type: String,
         required: [true, "Please Include your name"]
@@ -58,6 +61,7 @@ userSchema.methods.generateAuthToken = async function () {
     const user = this;
     const token = jwt.sign(
         {
+            userId: user.userId,
             _id: user._id,
             name: user.name,
             surname: user.surname,
