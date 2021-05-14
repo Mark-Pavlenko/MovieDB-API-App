@@ -41,7 +41,7 @@
             <star-rating
                 class="movie__actions-link"
                 :increment="0.01" :fixed-points="2"
-                :rating="ratinged"
+                :rating="this.rating"
                 @rating-selected="clickStarRating"
                 @click="clickStarRating(clickStarRating)"
             />
@@ -137,7 +137,9 @@ export default {
       favorite: '',
       user: '',
       filmId: this.id,
-      recs: []
+      recs: [],
+
+      rating: this.rating
     }
   },
   created() {
@@ -147,35 +149,34 @@ export default {
   },
   computed: {
     ratinged() {
-      console.log('mount method start after loading the page');
-      //from mounted all users from db arr
+      // let rating = 0;
+      // console.log(this.userId);
+      // if (`"${this.users[i].name}"` === localStorage.userName) {
+      //   for (let k of this.users) {
+      //
+      //   }
+      // }
+      // for (let i = 0; i < this.users.length; i++) {
+      //   if(this.user && this.ratingFilms.length)
+      // }
     }
   },
   mounted() {
     axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/recommendations?api_key=${storage.apiKey}&language=ru`)
         .then((response => (this.recs = response.data.results)));
 
-    //get all rating movies
+    //get movie rating for special user
     axios.get(`http://localhost:4000/user/allUsers`)
         .then(response => {
           this.users = response.data;
           for (let i = 0; i < this.users.length; i++) {
             if (`"${this.users[i].name}"` === localStorage.userName) {
-              // this.userRatingFilms = this.users[i].ratingFilms;
               console.log(this.users[i].ratingFilms);
-              // console.log(this.filmId);
               for (let j = 0; j < this.users[i].ratingFilms.length; j++) {
-                // console.log(this.userRatingFilms[j].filmId);
                 if (this.users[i].ratingFilms[j].filmId === this.filmId) {
-                  // console.log('This film has his user`s rating');
-                  let starRating = this.users[i].ratingFilms[j].filmRating;
-                  console.log(`Current user's film rating: ${starRating}`);
-
-                  // this.rating = this.users[i].userRatingFilms[j].filmRating;
-                  // console.log(this.rating);
-                }
-                else{
-                  // console.log('This film doesn`t have his user`s rating yet!');
+                  this.rating = this.users[i].ratingFilms[j].filmRating;
+                  console.log(`Current user's film rating: ${this.rating}`);
+                  return this.rating;
                 }
               }
             }
@@ -183,15 +184,15 @@ export default {
         });
   },
 
-  // fetchActors(id) {
-  //     axios.get(``)
-  //         .then(function (resp) {
-  //             let actor = resp.data.cast;
-  //             for (let i = 0; i < actor.length; i++) {
-  //                 if (actor[i].known_for_department === "Acting") {
-  //                     this.actorNames.push(actor[i].name);
-  //                 }
-  //             }
+// fetchActors(id) {
+//     axios.get(``)
+//         .then(function (resp) {
+//             let actor = resp.data.cast;
+//             for (let i = 0; i < actor.length; i++) {
+//                 if (actor[i].known_for_department === "Acting") {
+//                     this.actorNames.push(actor[i].name);
+//                 }
+//             }
   methods: {
     //add film to the db (pass film`s id)
     async addFilm(filmId) {
@@ -237,7 +238,8 @@ export default {
         let error = err.response;
         console.log(error);
       }
-    },
+    }
+    ,
 
     //fix that - delete all the films
     async removeFilm(filmId) {
@@ -259,7 +261,8 @@ export default {
         let error = err.response;
         console.log(error);
       }
-    },
+    }
+    ,
 
     // check if film is in favourite
     isFilmInFavourite(filmId) {
@@ -275,7 +278,8 @@ export default {
           console.log('Not Includes');
         }
       }
-    },
+    }
+    ,
 
     //output movie
     fetchMovie(id) {
@@ -292,7 +296,8 @@ export default {
           .catch(function (error) {
             this.$router.push({name: 'home-category'});
           }.bind(this));
-    },
+    }
+    ,
 
     //output actors
     fetchActors(id) {
@@ -318,39 +323,46 @@ export default {
           .catch(function (error) {
             this.$router.push({name: 'home-category'});
           }.bind(this));
-    },
+    }
+    ,
     poster() {
       if (this.movie.poster_path) {
         this.moviePosterSrc = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + this.movie.poster_path;
       }
-    },
+    }
+    ,
     photo() {
       if (this.actor.profile_path) {
         this.actorPosterSrc = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + this.actor.profile_path;
         console.log(this.actorPosterSrc);
       }
-    },
+    }
+    ,
     movieBackdrop() {
       if (this.movie.backdrop_path) {
         this.movieBackdropSrc = 'https://image.tmdb.org/t/p/w500' + this.movie.backdrop_path;
       }
-    },
+    }
+    ,
     actorBackdrop() {
       if (this.actor.profile_path) {
         this.actorBackdropSrc = 'https://image.tmdb.org/t/p/w500' + this.movie.profile_path;
       }
-    },
+    }
+    ,
     nestedDataToString(data) {
       let nestedArray = [], resultString;
       data.forEach((item) => nestedArray.push(item.name));
       resultString = nestedArray.join(', ');
       return resultString;
     }
-  },
+  }
+  ,
   watch: {
     id: function (val) {
       this.fetchMovie(val);
-    },
+    }
+    ,
     actorsId: function (val) {
       this.fetchActors(val);
     }
