@@ -91,7 +91,7 @@
 
     <div class="container mt-5">
       <div class="row">
-        <h1>Личные, советуемые другим, фильмы пользователя {{ this.featuredUserFilms }}</h1>
+        <h1>Личные, фильмы пользователя, которые он советует другим {{ this.featuredUserFilms }}</h1>
         <h1>Фильмы, что советуются другими пользователями (без фильмов самого пользователя) {{ this.featuredFilms }}</h1>
         <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендованные фильмы
           </h1>
@@ -185,17 +185,17 @@ export default {
               for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
                 this.featuredUserFilms.push(this.users[i].featuredFilms[j].filmId);
               }
-              console.log(this.featuredUserFilms);
               // console.log(`User's featured films: ${this.featuredUserFilms}`);
             }
             else {
               for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
                 this.featuredFilms.push(this.users[i].featuredFilms[j].filmId);
               }
-              console.log(this.featuredFilms);
               // console.log('Featured films of the others:' + this.featuredFilms);
             }
           }
+          console.log(this.featuredUserFilms);
+          console.log(this.featuredFilms);
         });
   },
   methods: {
