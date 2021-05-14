@@ -92,7 +92,7 @@
     <section>
       <div class="container mt-5">
         <div class="row">
-          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые по рейтингам
+          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые по пользовательским рейтингам
             фильмы</h1>
           <div class="col-md-12">
             <ul class="list-group">
@@ -108,12 +108,6 @@
 
     <div class="container mt-5">
       <div class="row">
-        <h1>Личные, фильмы пользователя, которые он советует другим {{ this.featuredUserFilms }}</h1>
-        <h1>Фильмы, что советуются другими пользователями (без фильмов самого пользователя)
-          {{ this.featuredFilms }}</h1>
-        <h1>Рекомендуемые пользователю фильмы (без учета рекомендваных им фильмов) {{
-            this.recommendedFeaturedFilms
-          }}</h1>
         <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендованные фильмы
         </h1>
         <div class="col-md-12">
