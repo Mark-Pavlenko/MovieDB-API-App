@@ -33,10 +33,10 @@
             </div>
 
             <!-- check if film is in favourite -->
-            <div class="movie__actions-link" :class="{'active' : favorite === true}"
-                 @click="isFilmInFavourite(id)">
-              <span class="movie__actions-text">film`s id</span>
-            </div>
+<!--            <div class="movie__actions-link" :class="{'active' : favorite === true}"-->
+<!--                 @click="isFilmInFavourite(id)">-->
+<!--              <span class="movie__actions-text">film`s id</span>-->
+<!--            </div>-->
 
             <star-rating
                 class="movie__actions-link"
@@ -171,11 +171,11 @@ export default {
           this.users = response.data;
           for (let i = 0; i < this.users.length; i++) {
             if (`"${this.users[i].name}"` === localStorage.userName) {
-              console.log(this.users[i].ratingFilms);
+              // console.log(this.users[i].ratingFilms);
               for (let j = 0; j < this.users[i].ratingFilms.length; j++) {
                 if (this.users[i].ratingFilms[j].filmId === this.filmId) {
                   this.rating = this.users[i].ratingFilms[j].filmRating;
-                  console.log(`Current user's film rating: ${this.rating}`);
+                  // console.log(`Current user's film rating: ${this.rating}`);
                   return this.rating;
                 }
               }
