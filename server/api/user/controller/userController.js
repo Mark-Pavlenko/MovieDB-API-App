@@ -104,8 +104,43 @@ exports.addRating = async (req, res) => {
     }
 };
 
+//add film to featured
+exports.addFeaturedFilm = async (req, res) => {
+    try {
+        const {userId, filmId, filmRating} = req.body;
+        // console.log(userId);
+        // console.log(filmId);
+        // console.log(filmRating);
+
+        //fix this
+        let ratingUser = await User.findById(userId);
+        // console.log(ratingUser);
+
+        if (ratingUser) {
+            if (ratingUser.featuredFilms.length > 0) {
+                for (let i of ratingUser.featuredFilms) {
+                    if (i.filmId === filmId) {
+                        i.filmRating = filmRating;
+                        const updatedUser = await ratingUser.save();
+                        console.log(updatedUser);
+                        return res.json({ratingUser: updatedUser, message: `fILM NAME ALREADY EXIST ${filmRating}`})
+                    }
+                }
+            }
+            ratingUser.featuredFilms.push({
+                filmId: req.body.filmId,
+                filmRating: req.body.filmRating
+            });
+            const ratingFilm = await ratingUser.save();
+            res.json(ratingFilm);
+        }
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 //get all users data
-exports.getAllUsersData = async(req, res) =>{
+exports.getAllUsersData = async (req, res) => {
     const allUsersData = await User.find();
     console.log(req.params);
     return res.json(allUsersData);

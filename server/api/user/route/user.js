@@ -14,7 +14,10 @@ router.get("/me", auth, userController.getUserDetails);
 router.get('/allUsers', userController.getAllUsersData);
 
 //put film`s rating
-router.put('/clickStarRating/:userId/:rating', userController.addRating)
+router.put('/clickStarRating/:userId/:rating', userController.addRating);
+
+//add film to featured
+router.put('/addFeaturedFilm/:userId/:rating', userController.addFeaturedFilm);
 
 //insert favourite film`s id into the db
 router.put('/addFilm/:id', userController.addFavouriteFilm);

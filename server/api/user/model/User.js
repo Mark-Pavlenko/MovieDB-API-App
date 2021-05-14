@@ -27,6 +27,16 @@ const userSchema = mongoose.Schema({
             }
         }
     ],
+    featuredFilms:[
+        {
+            filmId: {
+                type: String
+            },
+            filmRating: {
+                type: String
+            }
+        }
+    ],
     ratingFilms: [
         {
             filmId: {

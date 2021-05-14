@@ -148,20 +148,7 @@ export default {
     this.fetchActors(this.id);
     this.user = localStorage.getItem("jwt") ? true : false
   },
-  computed: {
-    ratinged() {
-      // let rating = 0;
-      // console.log(this.userId);
-      // if (`"${this.users[i].name}"` === localStorage.userName) {
-      //   for (let k of this.users) {
-      //
-      //   }
-      // }
-      // for (let i = 0; i < this.users.length; i++) {
-      //   if(this.user && this.ratingFilms.length)
-      // }
-    }
-  },
+  computed: {},
   mounted() {
     axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/recommendations?api_key=${storage.apiKey}&language=ru`)
         .then((response => (this.recs = response.data.results)));
@@ -172,11 +159,9 @@ export default {
           this.users = response.data;
           for (let i = 0; i < this.users.length; i++) {
             if (`"${this.users[i].name}"` === localStorage.userName) {
-              // console.log(this.users[i].ratingFilms);
               for (let j = 0; j < this.users[i].ratingFilms.length; j++) {
                 if (this.users[i].ratingFilms[j].filmId === this.filmId) {
                   this.rating = this.users[i].ratingFilms[j].filmRating;
-                  // console.log(`Current user's film rating: ${this.rating}`);
                   return this.rating;
                 }
               }
@@ -184,16 +169,6 @@ export default {
           }
         });
   },
-
-// fetchActors(id) {
-//     axios.get(``)
-//         .then(function (resp) {
-//             let actor = resp.data.cast;
-//             for (let i = 0; i < actor.length; i++) {
-//                 if (actor[i].known_for_department === "Acting") {
-//                     this.actorNames.push(actor[i].name);
-//                 }
-//             }
   methods: {
     //add film to the db (pass film`s id)
     async addFilm(filmId) {
@@ -225,16 +200,37 @@ export default {
         console.log(filmId);
         console.log(rating);
 
-        await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
-          filmRating: this.rating,
-          filmId: this.filmId,
-          userId
-        })
-            .then(response => {
-              console.log(response.data)
-            })
-        swal("Ура!", "\n" + "Рейтинг был успешно поставлен фильму.", "success");
-        // this.$router.push("/profile");
+        if (this.rating >= 4) {
+          await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
+            filmRating: this.rating,
+            filmId: this.filmId,
+            userId
+          })
+              .then(response => {
+                console.log(response.data)
+              });
+
+          await this.$http.put(`/user/addFeaturedFilm/${filmId}/${rating}`, {
+            filmRating: this.rating,
+            filmId: this.filmId,
+            userId
+          }).then(response => {
+            console.log(response.data)
+          });
+
+          await swal("Ура!", "\n" + "Рейтинг был успешно поставлен фильму.", "success");
+        }
+        else {
+          await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
+            filmRating: this.rating,
+            filmId: this.filmId,
+            userId
+          })
+              .then(response => {
+                console.log(response.data)
+              });
+          await swal("Ура!", "\n" + "Рейтинг был успешно поставлен фильму.", "success");
+        }
       } catch (err) {
         let error = err.response;
         console.log(error);
@@ -262,8 +258,7 @@ export default {
         let error = err.response;
         console.log(error);
       }
-    }
-    ,
+    },
 
     // check if film is in favourite
     isFilmInFavourite(filmId) {
@@ -310,22 +305,14 @@ export default {
                 this.actorNames.push(actor[i].name);
               }
             }
-            // console.log(this.actorNames);
-            // console.log(this.actor);
-
-            // console.log(this.actor.cast.known_for_department);
-            // if(this.actor.cast.known_for_department === "Acting")
             this.actor.cast = actor;
-            // console.log(actor);
-
             this.photo();
             this.actorBackdrop();
           }.bind(this))
           .catch(function (error) {
             this.$router.push({name: 'home-category'});
           }.bind(this));
-    }
-    ,
+    },
     poster() {
       if (this.movie.poster_path) {
         this.moviePosterSrc = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + this.movie.poster_path;
