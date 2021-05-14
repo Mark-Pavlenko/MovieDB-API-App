@@ -91,7 +91,10 @@
 
     <div class="container mt-5">
       <div class="row">
-        <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендованные фильмы</h1>
+        <h1>Личные, советуемые другим, фильмы пользователя {{ this.featuredUserFilms }}</h1>
+        <h1>Фильмы, что советуются другими пользователями (без фильмов самого пользователя) {{ this.featuredFilms }}</h1>
+        <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендованные фильмы
+          </h1>
         <div class="col-md-12">
           <ul class="list-group">
             <ul class="movies__list">
@@ -140,7 +143,9 @@ export default {
       filmId: this.id,
       recs: [],
 
-      rating: this.rating
+      rating: this.rating,
+      featuredUserFilms: [],
+      featuredFilms: []
     }
   },
   created() {
@@ -165,6 +170,30 @@ export default {
                   return this.rating;
                 }
               }
+            }
+          }
+        });
+
+    //get all featuredFilms except the user`s logged in
+    axios.get(`http://localhost:4000/user/allUsers`)
+        .then(response => {
+          let users = response.data;
+          // console.log(usersData);
+          for (let i = 0; i < users.length; i++) {
+            if (`"${this.users[i].name}"` === localStorage.userName) {
+              // console.log(this.users[i].featuredFilms);
+              for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
+                this.featuredUserFilms.push(this.users[i].featuredFilms[j].filmId);
+              }
+              console.log(this.featuredUserFilms);
+              // console.log(`User's featured films: ${this.featuredUserFilms}`);
+            }
+            else {
+              for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
+                this.featuredFilms.push(this.users[i].featuredFilms[j].filmId);
+              }
+              console.log(this.featuredFilms);
+              // console.log('Featured films of the others:' + this.featuredFilms);
             }
           }
         });
@@ -219,8 +248,7 @@ export default {
           });
 
           await swal("Ура!", "\n" + "Рейтинг был успешно поставлен фильму.", "success");
-        }
-        else {
+        } else {
           await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
             filmRating: this.rating,
             filmId: this.filmId,
