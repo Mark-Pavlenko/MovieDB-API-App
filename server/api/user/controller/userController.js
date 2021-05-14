@@ -43,41 +43,6 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-//add rating to the film
-exports.addRating = async (req, res) => {
-    try {
-        const {userId, filmId, filmRating} = req.body;
-        console.log(userId);
-        console.log(filmId);
-        console.log(filmRating);
-
-        //fix this
-        let ratingUser = await User.findById(userId);
-        console.log(ratingUser);
-
-        if (ratingUser) {
-            if (ratingUser.ratingFilms.length > 0) {
-                for (let i of ratingUser.ratingFilms) {
-                    if (i.filmId === filmId) {
-                        i.filmRating = filmRating;
-                        const updatedUser = await ratingUser.save();
-                        console.log(updatedUser);
-                        return res.json({ratingUser: updatedUser, message: `fILM NAME ALREADY EXIST ${filmRating}`})
-                    }
-                }
-            }
-            ratingUser.ratingFilms.push({
-                filmId: req.body.filmId,
-                filmRating: req.body.filmRating
-            });
-            const ratingFilm = await ratingUser.save();
-            res.json(ratingFilm);
-        }
-    } catch (err) {
-        console.log(err);
-    }
-};
-
 //add favourite film controller
 exports.addFavouriteFilm = async (req, res) => {
     try {
@@ -104,10 +69,52 @@ exports.removeFavouriteFilm = async (req, res) => {
 };
 
 
+//add rating to the film
+exports.addRating = async (req, res) => {
+    try {
+        const {userId, filmId, filmRating} = req.body;
+        // console.log(userId);
+        // console.log(filmId);
+        // console.log(filmRating);
+
+        //fix this
+        let ratingUser = await User.findById(userId);
+        // console.log(ratingUser);
+
+        if (ratingUser) {
+            if (ratingUser.ratingFilms.length > 0) {
+                for (let i of ratingUser.ratingFilms) {
+                    if (i.filmId === filmId) {
+                        i.filmRating = filmRating;
+                        const updatedUser = await ratingUser.save();
+                        console.log(updatedUser);
+                        return res.json({ratingUser: updatedUser, message: `fILM NAME ALREADY EXIST ${filmRating}`})
+                    }
+                }
+            }
+            ratingUser.ratingFilms.push({
+                filmId: req.body.filmId,
+                filmRating: req.body.filmRating
+            });
+            const ratingFilm = await ratingUser.save();
+            res.json(ratingFilm);
+        }
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+//get all users data
+exports.getAllUsersData = async(req, res) =>{
+    const allUsersData = await User.find();
+    console.log(req.params);
+    return res.json(allUsersData);
+}
+
 // //get user details
 exports.getUser = async (req, res) => {
     const updatedUser = await User.findOne({_id: req.params.id});
-    console.log(req.params.id)
+
     return res.json(updatedUser);
 };
 

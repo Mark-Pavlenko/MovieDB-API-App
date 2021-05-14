@@ -10,6 +10,9 @@ router.post("/login", userController.loginUser);
 router.get('/getUser/:id', userController.getUser);
 router.get("/me", auth, userController.getUserDetails);
 
+//get all users
+router.get('/allUsers', userController.getAllUsersData);
+
 //put film`s rating
 router.put('/clickStarRating/:userId/:rating', userController.addRating)
 
