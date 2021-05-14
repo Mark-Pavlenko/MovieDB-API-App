@@ -92,9 +92,13 @@
     <div class="container mt-5">
       <div class="row">
         <h1>Личные, фильмы пользователя, которые он советует другим {{ this.featuredUserFilms }}</h1>
-        <h1>Фильмы, что советуются другими пользователями (без фильмов самого пользователя) {{ this.featuredFilms }}</h1>
+        <h1>Фильмы, что советуются другими пользователями (без фильмов самого пользователя)
+          {{ this.featuredFilms }}</h1>
+        <h1>Рекомендуемые пользователю фильмы (без учета рекомендваных им фильмов) {{
+            this.recommendedFeaturedFilms
+          }}</h1>
         <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендованные фильмы
-          </h1>
+        </h1>
         <div class="col-md-12">
           <ul class="list-group">
             <ul class="movies__list">
@@ -145,7 +149,8 @@ export default {
 
       rating: this.rating,
       featuredUserFilms: [],
-      featuredFilms: []
+      featuredFilms: [],
+      recommendedFeaturedFilms: []
     }
   },
   created() {
@@ -174,28 +179,35 @@ export default {
           }
         });
 
-    //get all featuredFilms except the user`s logged in
+    //get the arr of recom id`s of films for user (except the repeated)
     axios.get(`http://localhost:4000/user/allUsers`)
         .then(response => {
           let users = response.data;
-          // console.log(usersData);
           for (let i = 0; i < users.length; i++) {
             if (`"${this.users[i].name}"` === localStorage.userName) {
-              // console.log(this.users[i].featuredFilms);
               for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
                 this.featuredUserFilms.push(this.users[i].featuredFilms[j].filmId);
               }
-              // console.log(`User's featured films: ${this.featuredUserFilms}`);
-            }
-            else {
+            } else {
               for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
                 this.featuredFilms.push(this.users[i].featuredFilms[j].filmId);
               }
-              // console.log('Featured films of the others:' + this.featuredFilms);
             }
           }
-          console.log(this.featuredUserFilms);
-          console.log(this.featuredFilms);
+          // console.log(this.featuredUserFilms);
+          // console.log(this.featuredFilms);
+
+          this.recommendedFeaturedFilms = this.featuredFilms.filter(el => !this.featuredUserFilms.includes(el));
+
+          for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
+            console.log(this.recommendedFeaturedFilms[i]);
+            axios
+                .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
+                .then((response) => {
+                  console.log(response.data)
+                });
+          }
+          
         });
   },
   methods: {
