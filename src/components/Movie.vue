@@ -9,6 +9,7 @@
                  v-img="moviePosterSrc">
             <img v-if="!moviePosterSrc" class="movies-item__img is-loaded" src="~assets/no-image.png">
           </figure>
+
           <div class="movie__title">
             <h1 class="movie__title-text">
               {{ movie.title }}
@@ -22,6 +23,14 @@
         <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type === 'page'}">
           <div class="movie__actions" v-if="user">
 
+            <star-rating
+                class="movie__actions-link"
+                :increment="0.01" :fixed-points="2"
+                :rating="this.rating"
+                @rating-selected="clickStarRating"
+                @click="clickStarRating(clickStarRating)"
+            />
+
             <div class="movie__actions-link" :class="{'active' : favorite === true}"
                  @click="addFilm(filmId)">
               <span class="movie__actions-text">Отметить как Избранное?</span>
@@ -33,18 +42,10 @@
             </div>
 
             <!-- check if film is in favourite -->
-<!--            <div class="movie__actions-link" :class="{'active' : favorite === true}"-->
-<!--                 @click="isFilmInFavourite(id)">-->
-<!--              <span class="movie__actions-text">film`s id</span>-->
-<!--            </div>-->
-
-            <star-rating
-                class="movie__actions-link"
-                :increment="0.01" :fixed-points="2"
-                :rating="this.rating"
-                @rating-selected="clickStarRating"
-                @click="clickStarRating(clickStarRating)"
-            />
+            <!--            <div class="movie__actions-link" :class="{'active' : favorite === true}"-->
+            <!--                 @click="isFilmInFavourite(id)">-->
+            <!--              <span class="movie__actions-text">film`s id</span>-->
+            <!--            </div>-->
 
           </div>
           <div class="movie__info">
@@ -609,6 +610,16 @@ export default {
     padding-bottom: 25px;
     font-weight: 300;
     font-size: 14px;
+  }
+
+  @media (min-width: 768px) {
+
+    .movie__actions {
+      order: 1;
+      width: 45%;
+      padding: 130px 0px 40px 50px;
+      border-top: 0;
+    }
   }
 }
 </style>
