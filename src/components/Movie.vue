@@ -89,6 +89,23 @@
     </div>
 
 
+    <section>
+      <div class="container mt-5">
+        <div class="row">
+          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые по рейтингам
+            фильмы</h1>
+          <div class="col-md-12">
+            <ul class="list-group">
+              <ul class="movies__list">
+                <movies-list-item class="movies__item" v-for="movie in outputRecommendedFeaturedFilms"
+                                  :movie="movie "></movies-list-item>
+              </ul>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="container mt-5">
       <div class="row">
         <h1>Личные, фильмы пользователя, которые он советует другим {{ this.featuredUserFilms }}</h1>
@@ -150,7 +167,8 @@ export default {
       rating: this.rating,
       featuredUserFilms: [],
       featuredFilms: [],
-      recommendedFeaturedFilms: []
+      recommendedFeaturedFilms: [],
+      outputRecommendedFeaturedFilms: []
     }
   },
   created() {
@@ -194,20 +212,27 @@ export default {
               }
             }
           }
-          // console.log(this.featuredUserFilms);
-          // console.log(this.featuredFilms);
 
-          this.recommendedFeaturedFilms = this.featuredFilms.filter(el => !this.featuredUserFilms.includes(el));
+          console.log(this.featuredFilms);
+          console.log(this.featuredUserFilms);
+
+          let array = this.featuredFilms;
+
+          this.recommendedFeaturedFilms = array.filter(function(elem, pos) {
+            return array.indexOf(elem) === pos;
+          });
+
+          console.log(this.recommendedFeaturedFilms);
 
           for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
             console.log(this.recommendedFeaturedFilms[i]);
             axios
                 .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
                 .then((response) => {
-                  console.log(response.data)
+                  this.outputRecommendedFeaturedFilms.push(response.data);
                 });
           }
-          
+          console.log(this.outputRecommendedFeaturedFilms);
         });
   },
   methods: {
