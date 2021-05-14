@@ -613,7 +613,6 @@ export default {
   }
 
   @media (min-width: 768px) {
-
     .movie__actions {
       order: 1;
       width: 45%;
