@@ -108,8 +108,8 @@
     <section>
       <div class="container mt-5">
         <div class="row">
-          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые фильмы по вашему самому
-            популярному жанру </h1>
+          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые фильмы согласно вашим
+            жанровым предпочтениям </h1>
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
@@ -252,8 +252,7 @@ export default {
           // console.log(this.outputRecommendedFeaturedFilms);
         });
 
-    //first - get an array of genres from featuredUsersFilms
-    //final - get ONE genre from array, which occurs most often
+    //get the recommendations of films by the most popular genre`s ID
     axios.get(`http://localhost:4000/user/allUsers`)
         .then(response => {
           // console.log('Featured users films array of genres:');
