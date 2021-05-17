@@ -108,7 +108,8 @@
     <section>
       <div class="container mt-5">
         <div class="row">
-          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые фильмы по самому популярному жанру </h1>
+          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые фильмы по вашему самому
+            популярному жанру </h1>
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
@@ -183,7 +184,8 @@ export default {
       featuredUserGenresArr: [],
       featuredUserGenresIds: [],
       firstGenresFilms: [],
-      finalGenresArr: []
+      finalGenresArr: [],
+      mostRepeatedGenreName: ''
     }
   },
   created() {
@@ -228,8 +230,8 @@ export default {
             }
           }
 
-          console.log(this.featuredFilms);
-          console.log(this.featuredUserFilms);
+          // console.log(this.featuredFilms);
+          // console.log(this.featuredUserFilms);
 
           let array = this.featuredFilms;
 
@@ -240,7 +242,7 @@ export default {
           console.log(this.recommendedFeaturedFilms);
 
           for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
-            console.log(this.recommendedFeaturedFilms[i]);
+            // console.log(this.recommendedFeaturedFilms[i]);
             axios
                 .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
                 .then((response) => {
@@ -254,7 +256,7 @@ export default {
     //final - get ONE genre from array, which occurs most often
     axios.get(`http://localhost:4000/user/allUsers`)
         .then(response => {
-          console.log('Featured users films array of genres:')
+          // console.log('Featured users films array of genres:');
           // console.log(this.featuredUserFilms);
           for (let i = 0; i < this.featuredUserFilms.length; i++) {
             axios
@@ -301,7 +303,17 @@ export default {
                   }
 
                   let mostRepeated = mostFrequent(this.featuredUserGenresIds, this.featuredUserGenresIds.length);
-                  // console.log(mostRepeated);
+                  console.log('The most popular user`s genre Id: ' + mostRepeated);
+
+                  // axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${storage.apiKey}&language=ru-RU`)
+                  //     .then(response => {
+                  //       console.log(response.data);
+                  //       for (let i = 0; i < response.data.length; i++) {
+                  //         for(let j = 0;)
+                  //         console.log(response.data[i]);
+                  //       }
+                  //     });
+
                   axios
                       .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${mostRepeated}&language=ru`)
                       .then((response) => {
@@ -309,7 +321,7 @@ export default {
                         for (let i = 0; i < this.firstGenresFilms.length; i++) {
                           this.finalGenresArr = this.firstGenresFilms[0];
                         }
-                        console.log(this.finalGenresArr);
+                        // console.log(this.finalGenresArr);
                       });
                 });
           }
