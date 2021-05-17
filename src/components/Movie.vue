@@ -92,7 +92,8 @@
     <section>
       <div class="container mt-5">
         <div class="row">
-          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Фильмы с найвысшими пользовательскими рейтингами</h1>
+          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Фильмы с найвысшими пользовательскими
+            рейтингами</h1>
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
@@ -161,7 +162,11 @@ export default {
       featuredUserFilms: [],
       featuredFilms: [],
       recommendedFeaturedFilms: [],
-      outputRecommendedFeaturedFilms: []
+      outputRecommendedFeaturedFilms: [],
+
+      featuredUserFilmsArr: [],
+      featuredUserGenresArr: [],
+      featuredUserGenresIds: []
     }
   },
   created() {
@@ -211,7 +216,7 @@ export default {
 
           let array = this.featuredFilms;
 
-          this.recommendedFeaturedFilms = array.filter(function(elem, pos) {
+          this.recommendedFeaturedFilms = array.filter(function (elem, pos) {
             return array.indexOf(elem) === pos;
           });
 
@@ -227,6 +232,34 @@ export default {
           }
           console.log(this.outputRecommendedFeaturedFilms);
         });
+
+    //first - get an array of genres from featuredUsersFilms
+    //final - get ONE genre from array, which occurs most often
+    axios.get(`http://localhost:4000/user/allUsers`)
+        .then(response => {
+              try {
+                console.log('Featured users films array of genres:')
+                // console.log(this.featuredUserFilms);
+                for (let i = 0; i < this.featuredUserFilms.length; i++) {
+                  axios
+                      .get(`https://api.themoviedb.org/3/movie/${this.featuredUserFilms[i]}?api_key=${storage.apiKey}&language=ru`)
+                      .then((response) => {
+                        this.featuredUserFilmsArr.push(response.data);
+                        for (let j = 0; j < this.featuredUserFilmsArr.length; j++) {
+                          this.featuredUserGenresArr = this.featuredUserFilmsArr[j].genres;
+                        }
+                        //console.log(this.featuredUserGenresArr); //arrays of all genres for every featured films
+                        for (let k = 0; k < this.featuredUserGenresArr.length; k++) {
+                          this.featuredUserGenresIds.push(this.featuredUserGenresArr[k].id);
+                        }
+                      });
+                }
+                console.log(this.featuredUserGenresIds);
+              } catch (err) {
+                console.log(err);
+              }
+            }
+        );
   },
   methods: {
     //add film to the db (pass film`s id)
@@ -296,7 +329,7 @@ export default {
     }
     ,
 
-    //fix that - delete all the films
+    //remove film from favourite
     async removeFilm(filmId) {
       try {
         console.log(filmId);

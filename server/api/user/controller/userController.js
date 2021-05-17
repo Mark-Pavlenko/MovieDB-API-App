@@ -81,7 +81,8 @@ exports.removeFavouriteFilm = async (req, res) => {
                         return res.json(updatedUser);
                     });
             }
-        };
+        }
+        ;
     } catch (err) {
         console.log(err);
     }
@@ -166,7 +167,6 @@ exports.getAllUsersData = async (req, res) => {
 // //get user details
 exports.getUser = async (req, res) => {
     const updatedUser = await User.findOne({_id: req.params.id});
-
     return res.json(updatedUser);
 };
 
