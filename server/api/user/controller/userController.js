@@ -55,19 +55,37 @@ exports.addFavouriteFilm = async (req, res) => {
     }
 };
 
-//controller to remove all favourite films ???
+//remove favourite film controller
 exports.removeFavouriteFilm = async (req, res) => {
     try {
-        let isFilm = await User.findOne({_id: req.body.id});
-        console.log('User id:' + isFilm._id);
-        isFilm.favouriteFilms.splice({film: req.body.favouriteFilms})
-        const updatedUser = await isFilm.save();
-        res.json(updatedUser);
+        let isUser = await User.findOne({_id: req.body.id})
+        let array = isUser.favouriteFilms;
+        // console.log(req.body);
+        // console.log(array);
+        for (let i = 0; i < array.length; i++) {
+            if (req.body.favouriteFilms === array[i].film) {
+
+                // let deletedUserId = isUser._id;
+                // let deletedFilmId = array[i]._id;
+                // console.log(deletedUserId);
+                // console.log(deletedFilmId);
+
+                await User.findByIdAndUpdate(
+                    isUser._id,
+                    {$pull: {'favouriteFilms': {_id: array[i]._id}}}, function (err, updatedUser) {
+                        if (err) {
+                            console.log(err);
+                            return res.send(err);
+                        }
+                        updatedUser = isUser.save();
+                        return res.json(updatedUser);
+                    });
+            }
+        };
     } catch (err) {
-        res.status(400).json({err: err});
+        console.log(err);
     }
 };
-
 
 //add rating to the film
 exports.addRating = async (req, res) => {
@@ -112,7 +130,6 @@ exports.addFeaturedFilm = async (req, res) => {
         // console.log(filmId);
         // console.log(filmRating);
 
-        //fix this
         let ratingUser = await User.findById(userId);
         // console.log(ratingUser);
 

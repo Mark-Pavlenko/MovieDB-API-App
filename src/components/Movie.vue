@@ -92,8 +92,7 @@
     <section>
       <div class="container mt-5">
         <div class="row">
-          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые по пользовательским рейтингам
-            фильмы</h1>
+          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Фильмы с найвысшими пользовательскими рейтингами</h1>
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
@@ -191,7 +190,7 @@ export default {
           }
         });
 
-    //get the arr of recom id`s of films for user (except the repeated)
+    //get the id`s array of recommended films for user (except the repeated)
     axios.get(`http://localhost:4000/user/allUsers`)
         .then(response => {
           let users = response.data;
@@ -305,7 +304,7 @@ export default {
         await this.$http.delete(`/user/removeFilm/${filmId}`, {
           data: {
             id: userId,
-            favouriteFilms: this.filmId
+            favouriteFilms: filmId
           }
         })
             .then(response => {
