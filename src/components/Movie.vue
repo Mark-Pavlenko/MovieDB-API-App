@@ -88,16 +88,31 @@
       </div>
     </div>
 
-
     <section>
       <div class="container mt-5">
         <div class="row">
           <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Фильмы с найвысшими пользовательскими
-            рейтингами</h1>
+            рейтингами </h1>
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
                 <movies-list-item class="movies__item" v-for="movie in outputRecommendedFeaturedFilms"
+                                  :movie="movie "></movies-list-item>
+              </ul>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container mt-5">
+        <div class="row">
+          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые фильмы по самому популярному жанру </h1>
+          <div class="col-md-12">
+            <ul class="list-group">
+              <ul class="movies__list">
+                <movies-list-item class="movies__item" v-for="movie in this.finalGenresArr"
                                   :movie="movie "></movies-list-item>
               </ul>
             </ul>
@@ -166,7 +181,9 @@ export default {
 
       featuredUserFilmsArr: [],
       featuredUserGenresArr: [],
-      featuredUserGenresIds: []
+      featuredUserGenresIds: [],
+      firstGenresFilms: [],
+      finalGenresArr: []
     }
   },
   created() {
@@ -230,36 +247,74 @@ export default {
                   this.outputRecommendedFeaturedFilms.push(response.data);
                 });
           }
-          console.log(this.outputRecommendedFeaturedFilms);
+          // console.log(this.outputRecommendedFeaturedFilms);
         });
 
     //first - get an array of genres from featuredUsersFilms
     //final - get ONE genre from array, which occurs most often
     axios.get(`http://localhost:4000/user/allUsers`)
         .then(response => {
-              try {
-                console.log('Featured users films array of genres:')
-                // console.log(this.featuredUserFilms);
-                for (let i = 0; i < this.featuredUserFilms.length; i++) {
+          console.log('Featured users films array of genres:')
+          // console.log(this.featuredUserFilms);
+          for (let i = 0; i < this.featuredUserFilms.length; i++) {
+            axios
+                .get(`https://api.themoviedb.org/3/movie/${this.featuredUserFilms[i]}?api_key=${storage.apiKey}&language=ru`)
+                .then((response) => {
+                  this.featuredUserFilmsArr.push(response.data);
+                  for (let j = 0; j < this.featuredUserFilmsArr.length; j++) {
+                    this.featuredUserGenresArr = this.featuredUserFilmsArr[j].genres;
+                  }
+                  //console.log(this.featuredUserGenresArr); //arrays of all genres for every featured films
+                  for (let k = 0; k < this.featuredUserGenresArr.length; k++) {
+                    this.featuredUserGenresIds.push(this.featuredUserGenresArr[k].id);
+                  }
+                  // console.log(this.featuredUserGenresIds);
+
+                  //find the most repeated value
+                  function mostFrequent(arr, n) {
+                    // Sort the array
+                    arr.sort();
+
+                    // find the max frequency using linear
+                    // traversal
+                    let max_count = 1, res = arr[0];
+                    let curr_count = 1;
+
+                    for (let i = 1; i < n; i++) {
+                      if (arr[i] == arr[i - 1])
+                        curr_count++;
+                      else {
+                        if (curr_count > max_count) {
+                          max_count = curr_count;
+                          res = arr[i - 1];
+                        }
+                        curr_count = 1;
+                      }
+                    }
+
+                    // If last element is most frequent
+                    if (curr_count > max_count) {
+                      max_count = curr_count;
+                      res = arr[n - 1];
+                    }
+                    return res;
+                  }
+
+                  let mostRepeated = mostFrequent(this.featuredUserGenresIds, this.featuredUserGenresIds.length);
+                  // console.log(mostRepeated);
                   axios
-                      .get(`https://api.themoviedb.org/3/movie/${this.featuredUserFilms[i]}?api_key=${storage.apiKey}&language=ru`)
+                      .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${mostRepeated}&language=ru`)
                       .then((response) => {
-                        this.featuredUserFilmsArr.push(response.data);
-                        for (let j = 0; j < this.featuredUserFilmsArr.length; j++) {
-                          this.featuredUserGenresArr = this.featuredUserFilmsArr[j].genres;
+                        this.firstGenresFilms.push(response.data.results);
+                        for (let i = 0; i < this.firstGenresFilms.length; i++) {
+                          this.finalGenresArr = this.firstGenresFilms[0];
                         }
-                        //console.log(this.featuredUserGenresArr); //arrays of all genres for every featured films
-                        for (let k = 0; k < this.featuredUserGenresArr.length; k++) {
-                          this.featuredUserGenresIds.push(this.featuredUserGenresArr[k].id);
-                        }
+                        console.log(this.finalGenresArr);
                       });
-                }
-                console.log(this.featuredUserGenresIds);
-              } catch (err) {
-                console.log(err);
-              }
-            }
-        );
+                });
+          }
+
+        });
   },
   methods: {
     //add film to the db (pass film`s id)
