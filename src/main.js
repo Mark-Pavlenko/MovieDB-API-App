@@ -4,11 +4,11 @@ import axios from 'axios';
 import router from './routes';
 import App from './App.vue';
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {faHeart, faUserSecret} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add(faUserSecret)
+library.add(faUserSecret, faHeart);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

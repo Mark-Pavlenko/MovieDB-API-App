@@ -72,14 +72,27 @@
               <div v-if="this.actorNames.length" class="actor__details-text">
                 <div v-for="actor in this.actorNames.slice(0,10)" :key="actor"
                      class="movie__details-text">
-                  {{ actor }}<a href="/">Some text</a>
+                  {{ actor }}
+                  <span class="addFavouriteActor" @click="addFavouriteActor(actor)">
+                  <font-awesome-icon :icon="['fas', 'heart']"/>
+                </span>
                 </div>
               </div>
+
+<!--              <div v-if="this.actorIds.length" class="actor__details-text">-->
+<!--                <div v-for="actor in this.actorIds.slice(0,10)" :key="actor"-->
+<!--                     class="movie__details-text">-->
+<!--                  {{ actor }}-->
+<!--                  <span class="addFavouriteActor" @click="addFavouriteActor(filmId)">-->
+<!--                  <font-awesome-icon :icon="['fas', 'heart']"/>-->
+<!--                </span>-->
+<!--                </div>-->
+<!--              </div>-->
             </div>
 
             <div v-if="movie.release_date" class="movie__details-block">
               <h2 class="movie__details-title">
-                Дата выхода <font-awesome-icon icon="user-secret" />
+                Дата выхода
               </h2>
               <div class="movie__details-text" v-formatDate="movie.release_date"></div>
             </div>
@@ -150,7 +163,6 @@ import StarRating from "vue-star-rating";
 import MoviesListItem from './MoviesListItem.vue';
 
 
-
 export default {
   props: ['id', 'type'],
   components: {StarRating, MoviesListItem},
@@ -169,6 +181,7 @@ export default {
       actorLoaded: false,
       actorPosterSrc: '',
       actorBackdropSrc: '',
+      actorIds: [],
       actorNames: [],
 
       favorite: '',
@@ -197,6 +210,7 @@ export default {
   },
   computed: {},
   mounted() {
+    //recommendations of standard movie db api
     axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/recommendations?api_key=${storage.apiKey}&language=ru`)
         .then((response => (this.recs = response.data.results)));
 
@@ -237,7 +251,7 @@ export default {
           this.recommendedFeaturedFilms = array.filter(function (elem, pos) {
             return array.indexOf(elem) === pos;
           });
-          console.log(this.recommendedFeaturedFilms);
+          // console.log(this.recommendedFeaturedFilms);
           for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
             // console.log(this.recommendedFeaturedFilms[i]);
             axios
@@ -299,7 +313,7 @@ export default {
                   }
 
                   let mostRepeated = mostFrequent(this.featuredUserGenresIds, this.featuredUserGenresIds.length);
-                  console.log('The most popular user`s genre Id: ' + mostRepeated);
+                  // console.log('The most popular user`s genre Id: ' + mostRepeated);
 
                   // axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${storage.apiKey}&language=ru-RU`)
                   //     .then(response => {
@@ -324,14 +338,15 @@ export default {
 
         });
 
-    axios.get(`http://localhost:4000/user/allUsers`)
-        .then(response => {
-          console.log(this.featuredUserFilms);
-        });
+    // axios.get(`http://localhost:4000/user/allUsers`)
+    //     .then(response => {
+    //       console.log(this.featuredUserFilms);
+    //     });
 
   },
   methods: {
-    //add film to the db (pass film`s id)
+
+    //add film to the db
     async addFilm(filmId) {
       try {
         console.log(filmId);
@@ -351,7 +366,7 @@ export default {
       }
     },
 
-    //get film rating
+    //set film`s rating
     async clickStarRating(rating) {
       try {
         const userId = JSON.parse(localStorage.getItem('user'))._id;
@@ -395,8 +410,7 @@ export default {
         let error = err.response;
         console.log(error);
       }
-    }
-    ,
+    },
 
     //remove film from favourite
     async removeFilm(filmId) {
@@ -420,6 +434,11 @@ export default {
       }
     },
 
+    //add favourite actor
+    addFavouriteActor(filmId) {
+      console.log(this.actorIds);
+    },
+
     // check if film is in favourite
     isFilmInFavourite(filmId) {
       let favouriteFilmId = JSON.parse(localStorage.getItem('user')).favouriteFilms;
@@ -434,8 +453,7 @@ export default {
           console.log('Not Includes');
         }
       }
-    }
-    ,
+    },
 
     //output movie
     fetchMovie(id) {
@@ -460,11 +478,14 @@ export default {
       axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${storage.apiKey}&language=ru`)
           .then(function (resp) {
             let actor = resp.data.cast;
+            console.log(resp.data.cast);
             for (let i = 0; i < actor.length; i++) {
               if (actor[i].known_for_department === "Acting") {
                 this.actorNames.push(actor[i].name);
+                this.actorIds.push(actor[i].id);
               }
             }
+            // console.log(this.actorIds);
             this.actor.cast = actor;
             this.photo();
             this.actorBackdrop();
