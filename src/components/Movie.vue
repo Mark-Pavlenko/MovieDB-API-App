@@ -173,7 +173,7 @@ export default {
       actorBackdropSrc: '',
       actorIds: [],
       actorNames: [],
-      favouriteActorId: [],
+      favouriteActorIds: [],
       actorId: '',
 
       favorite: '',
@@ -222,20 +222,40 @@ export default {
         });
 
     //get the id`s array of recommended films for user (except the repeated)
+    //get the id`s array of favourite actors of the user
     axios.get(`http://localhost:4000/user/allUsers`)
         .then(response => {
           let users = response.data;
+          console.log(response.data);
+
+          //get featuredFilms and featuredUserFilms arrays
           for (let i = 0; i < users.length; i++) {
             if (`"${this.users[i].name}"` === localStorage.userName) {
+
+              //get featuredUserFilms arrays
               for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
                 this.featuredUserFilms.push(this.users[i].featuredFilms[j].filmId);
               }
+
+              //get specific User favouriteActors array of IDs
+              for (let j = 0; j < this.users[i].favouriteActors.length; j++) {
+                this.favouriteActorIds.push(this.users[i].favouriteActors[j].actorId);
+                console.log(this.favouriteActorIds)
+              }
+
+
             } else {
+              //get featuredFilms  arrays
               for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
                 this.featuredFilms.push(this.users[i].featuredFilms[j].filmId);
               }
             }
+
           }
+
+
+
+
           // console.log(this.featuredFilms);
           // console.log(this.featuredUserFilms);
           let array = this.featuredFilms;
@@ -255,8 +275,10 @@ export default {
         });
 
     //get the recommendations of films by the most popular genre`s ID
+    //get the recommendations of films by the most popular favourite actor`s ID
     axios.get(`http://localhost:4000/user/allUsers`)
         .then(response => {
+
           // console.log('Featured users films array of genres:');
           // console.log(this.featuredUserFilms);
           for (let i = 0; i < this.featuredUserFilms.length; i++) {
@@ -326,6 +348,15 @@ export default {
                       });
                 });
           }
+
+          // console.log(response.data);
+          // for(let i = 0; i < this.favouriteFilms.length; i++){
+          //   axios
+          //       .get(`https://api.themoviedb.org/3/movie/${this.favouriteFilms[i]}?api_key=${storage.apiKey}&language=ru`)
+          //       .then((response)=>{
+          //         console.log(response.data);
+          //       });
+          // }
 
         });
   },
