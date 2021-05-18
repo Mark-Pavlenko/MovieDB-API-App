@@ -51,7 +51,20 @@ exports.addFavouriteFilm = async (req, res) => {
         const updatedUser = await isUser.save();
         res.json(updatedUser);
     } catch (err) {
-        res.status(400).json({err: err});
+        console.log(err);
+    }
+};
+
+//add favourite actor controller
+exports.addFavouriteActor = async (req, res) => {
+    console.log('addfavactor controllr');
+    try {
+        let ourUser = await User.findOne({_id: req.body.id});
+        ourUser.favouriteActors.push({actor: req.body.favouriteActors});
+        const updatedUser = await ourUser.save();
+        res.json(updatedUser);
+    } catch (err) {
+        console.log(err);
     }
 };
 

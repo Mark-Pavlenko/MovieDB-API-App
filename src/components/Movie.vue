@@ -71,7 +71,7 @@
 
               <div v-if="this.actorNames.length" class="actor__details-text">
                 <div v-for="actor in this.actorNames.slice(0,10)" v-bind:key="actor"
-                     class="movie__details-text" >
+                     class="movie__details-text">
                   {{ actor }}
                   <span class="addFavouriteActor" v-on:click="addFavouriteActor(actor)">
                   <font-awesome-icon :icon="['fas', 'heart']"/>
@@ -173,7 +173,8 @@ export default {
       actorBackdropSrc: '',
       actorIds: [],
       actorNames: [],
-      favouriteActorName: '',
+      favouriteActorId: [],
+      actorId: '',
 
       favorite: '',
       user: '',
@@ -327,20 +328,8 @@ export default {
           }
 
         });
-
-    // axios.get(`http://localhost:4000/user/allUsers`)
-    //     .then(response => {
-    //       console.log(this.featuredUserFilms);
-    //     });
-
   },
   methods: {
-
-
-
-    handleInput() {
-      console.log(this.actorName); // logs the input value
-    },
 
     //add film to the db
     async addFilm(filmId) {
@@ -355,11 +344,12 @@ export default {
               console.log(response)
             })
         swal("Ура!", "\n" + "Фильм был успешно добавлен в избранное.", "success");
-        this.$router.push("/profile");
+        // this.$router.push("/profile");
       } catch (err) {
         let error = err.response;
         console.log(error);
       }
+
     },
 
     //set film`s rating
@@ -423,7 +413,7 @@ export default {
               console.log(response)
             })
         swal("Ура!", "\n" + "Фильм был успешно удален из избранных!.", "success");
-        this.$router.push("/profile");
+        // this.$router.push("/profile");
       } catch (err) {
         let error = err.response;
         console.log(error);
@@ -431,18 +421,35 @@ export default {
     },
 
     //add favourite actor
-    addFavouriteActor(favouriteActorName) {
+    async addFavouriteActor(favouriteActorName) {
       console.log('We have liked: ' + favouriteActorName);
       // console.log(this.actorIds);
       // console.log(this.actorNames);
       axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/credits?api_key=${storage.apiKey}&language=ru`)
-          .then(function (response) {
-              console.log(response.data.cast);
-              for(let i =0; i < response.data.cast.length; i++){
-                if(response.data.cast[i].name === favouriteActorName){
-                  console.log(response.data.cast[i].id);
+          .then(async function (response) {
+            console.log(response.data.cast);
+            for (let i = 0; i < response.data.cast.length; i++) {
+              if (response.data.cast[i].name === favouriteActorName) {
+                let actorId = response.data.cast[i].id;
+                try {
+                  console.log('Actor id: ' + actorId);
+                  const userId = JSON.parse(localStorage.getItem('user'))._id;
+                  console.log('user id: ' + userId);
+                  await axios.put(`http://localhost:4000/user/addActor/${actorId}`, {
+                      id: userId,
+                      favouriteActors: actorId
+                  })
+                      .then(response => {
+                        console.log(response)
+                      })
+                  swal("Ура!", "\n" + "Актер был успешно добавлен к избранным!", "success");
+                } catch (err) {
+                  let error = err.response;
+                  console.log(error);
                 }
+
               }
+            }
           });
     },
 

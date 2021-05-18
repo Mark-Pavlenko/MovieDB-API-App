@@ -20,6 +20,13 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Please Include your password"]
     },
+    favouriteActors: [
+        {
+            actor: {
+                type: String
+            }
+        }
+    ],
     favouriteFilms: [
         {
             film: {
@@ -76,7 +83,9 @@ userSchema.methods.generateAuthToken = async function () {
             name: user.name,
             surname: user.surname,
             email: user.email,
+            favouriteActors: user.favouriteActors,
             favouriteFilms: user.favouriteFilms,
+            featuredFilms: user.featuredFilms,
             ratingFilms: user.ratingFilms
         },
         "secret"

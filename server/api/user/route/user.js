@@ -22,6 +22,9 @@ router.put('/addFeaturedFilm/:userId/:rating', userController.addFeaturedFilm);
 //insert favourite film`s id into the db
 router.put('/addFilm/:id', userController.addFavouriteFilm);
 
+//add favourite actor
+router.put('/addActor/:id', userController.addFavouriteActor);
+
 //delete favourite film`s id from the db
 router.delete('/removeFilm/:id', userController.removeFavouriteFilm);
 
