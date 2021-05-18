@@ -8,6 +8,7 @@
 import storage from '../storage.js'
 import MoviesList from './MoviesList.vue'
 
+
 export default {
   components: { MoviesList },
   data(){
@@ -18,7 +19,8 @@ export default {
   created(){
     document.title = 'The Movie DB API App';
     storage.backTitle = document.title;
-  }
+  },
+  name: 'App'
 }
 </script>
 

@@ -72,14 +72,14 @@
               <div v-if="this.actorNames.length" class="actor__details-text">
                 <div v-for="actor in this.actorNames.slice(0,10)" :key="actor"
                      class="movie__details-text">
-                  {{ actor }}
+                  {{ actor }}<a href="/">Some text</a>
                 </div>
               </div>
             </div>
 
             <div v-if="movie.release_date" class="movie__details-block">
               <h2 class="movie__details-title">
-                Дата выхода
+                Дата выхода <font-awesome-icon icon="user-secret" />
               </h2>
               <div class="movie__details-text" v-formatDate="movie.release_date"></div>
             </div>
@@ -147,7 +147,9 @@ import img from '../directives/v-image.js'
 import formatDate from '../directives/v-formatDate.js'
 import swal from "sweetalert"
 import StarRating from "vue-star-rating";
-import MoviesListItem from './MoviesListItem.vue'
+import MoviesListItem from './MoviesListItem.vue';
+
+
 
 export default {
   props: ['id', 'type'],
@@ -229,18 +231,13 @@ export default {
               }
             }
           }
-
           // console.log(this.featuredFilms);
           // console.log(this.featuredUserFilms);
-
           let array = this.featuredFilms;
-
           this.recommendedFeaturedFilms = array.filter(function (elem, pos) {
             return array.indexOf(elem) === pos;
           });
-
           console.log(this.recommendedFeaturedFilms);
-
           for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
             // console.log(this.recommendedFeaturedFilms[i]);
             axios
@@ -326,6 +323,12 @@ export default {
           }
 
         });
+
+    axios.get(`http://localhost:4000/user/allUsers`)
+        .then(response => {
+          console.log(this.featuredUserFilms);
+        });
+
   },
   methods: {
     //add film to the db (pass film`s id)
