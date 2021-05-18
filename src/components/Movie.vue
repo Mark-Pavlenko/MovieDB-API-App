@@ -70,26 +70,15 @@
               </h2>
 
               <div v-if="this.actorNames.length" class="actor__details-text">
-                <div v-for="actor in this.actorNames.slice(0,10)" :key="actor"
-                     class="movie__details-text">
+                <div v-for="actor in this.actorNames.slice(0,10)" v-bind:key="actor"
+                     class="movie__details-text" >
                   {{ actor }}
-                  <span class="addFavouriteActor" @click="addFavouriteActor(actor)">
+                  <span class="addFavouriteActor" v-on:click="addFavouriteActor(actor)">
                   <font-awesome-icon :icon="['fas', 'heart']"/>
                 </span>
                 </div>
               </div>
-
-<!--              <div v-if="this.actorIds.length" class="actor__details-text">-->
-<!--                <div v-for="actor in this.actorIds.slice(0,10)" :key="actor"-->
-<!--                     class="movie__details-text">-->
-<!--                  {{ actor }}-->
-<!--                  <span class="addFavouriteActor" @click="addFavouriteActor(filmId)">-->
-<!--                  <font-awesome-icon :icon="['fas', 'heart']"/>-->
-<!--                </span>-->
-<!--                </div>-->
-<!--              </div>-->
             </div>
-
             <div v-if="movie.release_date" class="movie__details-block">
               <h2 class="movie__details-title">
                 Дата выхода
@@ -172,6 +161,7 @@ export default {
   },
   data() {
     return {
+
       movie: {},
       movieLoaded: false,
       moviePosterSrc: '',
@@ -183,6 +173,7 @@ export default {
       actorBackdropSrc: '',
       actorIds: [],
       actorNames: [],
+      favouriteActorName: '',
 
       favorite: '',
       user: '',
@@ -208,7 +199,6 @@ export default {
     this.fetchActors(this.id);
     this.user = localStorage.getItem("jwt") ? true : false
   },
-  computed: {},
   mounted() {
     //recommendations of standard movie db api
     axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/recommendations?api_key=${storage.apiKey}&language=ru`)
@@ -346,6 +336,12 @@ export default {
   },
   methods: {
 
+
+
+    handleInput() {
+      console.log(this.actorName); // logs the input value
+    },
+
     //add film to the db
     async addFilm(filmId) {
       try {
@@ -435,8 +431,10 @@ export default {
     },
 
     //add favourite actor
-    addFavouriteActor(filmId) {
+    addFavouriteActor(favouriteActorName) {
+      console.log('We have liked: ' + favouriteActorName);
       console.log(this.actorIds);
+      console.log(this.actorNames)
     },
 
     // check if film is in favourite
