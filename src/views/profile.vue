@@ -61,7 +61,7 @@
                             let filmId = this.user.favouriteFilms[film]
                             console.log(this.user)
                             axios
-                                .get(`https://api.themoviedb.org/3/movie/${filmId.film}?api_key=${storage.apiKey}&language=ru`)
+                                .get(`https://api.themoviedb.org/3/movie/${filmId.filmId}?api_key=${storage.apiKey}&language=ru`)
                                 .then((response) => {
                                     this.arraysId.push(response.data)
                                 });
