@@ -2,6 +2,7 @@
 <template>
   <section class="movie">
     <div class="movie__container" v-if="movieLoaded">
+
       <header class="movie__header" :class="{'movie__header--page': type=='page'}">
         <div class="movie__wrap movie__wrap--header" :class="{'movie__wrap--page': type=='page'}">
           <figure class="movie__poster">
@@ -19,6 +20,7 @@
           </div>
         </div>
       </header>
+
       <div class="movie__main">
         <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type === 'page'}">
           <div class="movie__actions" v-if="user">
@@ -73,7 +75,7 @@
                 <div v-for="actor in this.actorNames.slice(0,10)" v-bind:key="actor"
                      class="movie__details-text">
                   {{ actor }}
-                  <span class="addFavouriteActor" v-on:click="addFavouriteActor(actor)">
+                  <span class="addFavouriteActor" v-on:click="addFavouriteActor(actor)" v-if="user">
                   <font-awesome-icon :icon="['fas', 'heart']"/>
                 </span>
                 </div>
@@ -90,57 +92,53 @@
       </div>
     </div>
 
-    <section>
-      <div class="container mt-5">
-        <div class="row">
-          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Фильмы с найвысшими пользовательскими
-            рейтингами </h1>
-          <div class="col-md-12">
-            <ul class="list-group">
-              <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in outputRecommendedFeaturedFilms"
-                                  :movie="movie "></movies-list-item>
-              </ul>
+    <div class="container mt-5">
+      <div class="row">
+        <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Фильмы с найвысшими пользовательскими
+          рейтингами </h1>
+        <div class="col-md-12">
+          <ul class="list-group">
+            <ul class="movies__list">
+              <movies-list-item class="movies__item" v-for="movie in outputRecommendedFeaturedFilms"
+                                :movie="movie "></movies-list-item>
             </ul>
-          </div>
+          </ul>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <div class="container mt-5">
-        <div class="row">
-          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
-            Рекомендуемые фильмы с вашим любимым актером</h1>
-          <div class="col-md-12">
-            <ul class="list-group">
-<!--              <h1 v-for="movie in filmsIdsOfFavouriteActor">{{ movie }}</h1>-->
-                            <ul class="movies__list">
-                              <movies-list-item class="movies__item" v-for="movie in filmsOfFavouriteActor"
-                                                :movie="movie "></movies-list-item>
-                            </ul>
+    <div class="container mt-5">
+      <div class="row">
+        <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
+          Рекомендуемые фильмы с вашим любимым актером</h1>
+        <div class="col-md-12">
+          <ul class="list-group">
+            <!--              <h1 v-for="movie in filmsIdsOfFavouriteActor">{{ movie }}</h1>-->
+            <ul class="movies__list">
+              <movies-list-item class="movies__item" v-for="movie in filmsOfFavouriteActor"
+                                :movie="movie "></movies-list-item>
             </ul>
-          </div>
+          </ul>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <div class="container mt-5">
-        <div class="row">
-          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">Рекомендуемые фильмы согласно вашим
-            жанровым предпочтениям </h1>
-          <div class="col-md-12">
-            <ul class="list-group">
-              <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in this.finalGenresArr"
-                                  :movie="movie "></movies-list-item>
-              </ul>
+
+    <div class="container mt-5">
+      <div class="row">
+        <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
+          Рекомендуемые фильмы вашего любимого жанра
+        </h1>
+        <div class="col-md-12">
+          <ul class="list-group">
+            <ul class="movies__list">
+              <movies-list-item class="movies__item" v-for="movie in this.finalGenresArr"
+                                :movie="movie "></movies-list-item>
             </ul>
-          </div>
+          </ul>
         </div>
       </div>
-    </section>
+    </div>
 
     <div class="container mt-5">
       <div class="row">
@@ -189,7 +187,6 @@ export default {
       actorLoaded: false,
       actorPosterSrc: '',
       actorBackdropSrc: '',
-      actorIds: [],
       actorNames: [],
       favouriteActorIds: [],
       filmsIdsOfFavouriteActor: [],
@@ -398,7 +395,6 @@ export default {
     //add favourite actor
     async addFavouriteActor(favouriteActorName) {
       console.log('We have liked: ' + favouriteActorName);
-      // console.log(this.actorIds);
       // console.log(this.actorNames);
       axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/credits?api_key=${storage.apiKey}&language=ru`)
           .then(async function (response) {
@@ -538,10 +534,8 @@ export default {
             for (let i = 0; i < actor.length; i++) {
               if (actor[i].known_for_department === "Acting") {
                 this.actorNames.push(actor[i].name);
-                this.actorIds.push(actor[i].id);
               }
             }
-            // console.log(this.actorIds);
             this.actor.cast = actor;
             this.photo();
             this.actorBackdrop();

@@ -71,6 +71,7 @@
             },
             logUserOut() {
                 localStorage.removeItem("jwt");
+                localStorage.clear();
                 this.$router.push("/login");
                 document.location.reload();
             }
