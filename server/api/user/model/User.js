@@ -22,14 +22,14 @@ const userSchema = mongoose.Schema({
     },
     favouriteActors: [
         {
-            actor: {
+            actorId: {
                 type: String
             }
         }
     ],
     favouriteFilms: [
         {
-            film: {
+            filmId: {
                 type: String
             }
         }

@@ -349,7 +349,39 @@ export default {
         let error = err.response;
         console.log(error);
       }
+    },
 
+    //add favourite actor
+    async addFavouriteActor(favouriteActorName) {
+      console.log('We have liked: ' + favouriteActorName);
+      // console.log(this.actorIds);
+      // console.log(this.actorNames);
+      axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/credits?api_key=${storage.apiKey}&language=ru`)
+          .then(async function (response) {
+            console.log(response.data.cast);
+            for (let i = 0; i < response.data.cast.length; i++) {
+              if (response.data.cast[i].name === favouriteActorName) {
+                let actorId = response.data.cast[i].id;
+                try {
+                  console.log('Actor id: ' + actorId);
+                  const userId = JSON.parse(localStorage.getItem('user'))._id;
+                  console.log('user id: ' + userId);
+                  await axios.put(`http://localhost:4000/user/addActor/${actorId}`, {
+                    id: userId,
+                    favouriteActors: actorId
+                  })
+                      .then(response => {
+                        console.log(response)
+                      })
+                  swal("Ура!", "\n" + "Актер был успешно добавлен к избранным!", "success");
+                } catch (err) {
+                  let error = err.response;
+                  console.log(error);
+                }
+
+              }
+            }
+          });
     },
 
     //set film`s rating
@@ -418,39 +450,6 @@ export default {
         let error = err.response;
         console.log(error);
       }
-    },
-
-    //add favourite actor
-    async addFavouriteActor(favouriteActorName) {
-      console.log('We have liked: ' + favouriteActorName);
-      // console.log(this.actorIds);
-      // console.log(this.actorNames);
-      axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/credits?api_key=${storage.apiKey}&language=ru`)
-          .then(async function (response) {
-            console.log(response.data.cast);
-            for (let i = 0; i < response.data.cast.length; i++) {
-              if (response.data.cast[i].name === favouriteActorName) {
-                let actorId = response.data.cast[i].id;
-                try {
-                  console.log('Actor id: ' + actorId);
-                  const userId = JSON.parse(localStorage.getItem('user'))._id;
-                  console.log('user id: ' + userId);
-                  await axios.put(`http://localhost:4000/user/addActor/${actorId}`, {
-                      id: userId,
-                      favouriteActors: actorId
-                  })
-                      .then(response => {
-                        console.log(response)
-                      })
-                  swal("Ура!", "\n" + "Актер был успешно добавлен к избранным!", "success");
-                } catch (err) {
-                  let error = err.response;
-                  console.log(error);
-                }
-
-              }
-            }
-          });
     },
 
     // check if film is in favourite

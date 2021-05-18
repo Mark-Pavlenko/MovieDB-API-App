@@ -47,7 +47,7 @@ exports.loginUser = async (req, res) => {
 exports.addFavouriteFilm = async (req, res) => {
     try {
         let isUser = await User.findOne({_id: req.body.id});
-        isUser.favouriteFilms.push({film: req.body.favouriteFilms});
+        isUser.favouriteFilms.push({filmId: req.body.favouriteFilms});
         const updatedUser = await isUser.save();
         res.json(updatedUser);
     } catch (err) {
@@ -60,7 +60,7 @@ exports.addFavouriteActor = async (req, res) => {
     console.log('addfavactor controllr');
     try {
         let ourUser = await User.findOne({_id: req.body.id});
-        ourUser.favouriteActors.push({actor: req.body.favouriteActors});
+        ourUser.favouriteActors.push({actorId: req.body.favouriteActors});
         const updatedUser = await ourUser.save();
         res.json(updatedUser);
     } catch (err) {
