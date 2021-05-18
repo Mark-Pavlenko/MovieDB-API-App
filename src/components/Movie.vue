@@ -433,8 +433,17 @@ export default {
     //add favourite actor
     addFavouriteActor(favouriteActorName) {
       console.log('We have liked: ' + favouriteActorName);
-      console.log(this.actorIds);
-      console.log(this.actorNames)
+      // console.log(this.actorIds);
+      // console.log(this.actorNames);
+      axios.get(`https://api.themoviedb.org/3/movie/${this.filmId}/credits?api_key=${storage.apiKey}&language=ru`)
+          .then(function (response) {
+              console.log(response.data.cast);
+              for(let i =0; i < response.data.cast.length; i++){
+                if(response.data.cast[i].name === favouriteActorName){
+                  console.log(response.data.cast[i].id);
+                }
+              }
+          });
     },
 
     // check if film is in favourite
@@ -468,15 +477,14 @@ export default {
           .catch(function (error) {
             this.$router.push({name: 'home-category'});
           }.bind(this));
-    }
-    ,
+    },
 
     //output actors
     fetchActors(id) {
       axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${storage.apiKey}&language=ru`)
           .then(function (resp) {
             let actor = resp.data.cast;
-            console.log(resp.data.cast);
+            // console.log(resp.data.cast);
             for (let i = 0; i < actor.length; i++) {
               if (actor[i].known_for_department === "Acting") {
                 this.actorNames.push(actor[i].name);
