@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <div class="container mt-5">
+      <div class="container mt-5" v-if="listLoaded">
         <div class="row">
           <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
             Рекомендуемые фильмы вашего любимого жанра
@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <div class="container mt-5">
+      <div class="container mt-5" v-if="listLoaded">
         <div class="row">
           <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
             Рекомендуемые фильмы с вашим любимым актером</h1>
@@ -89,49 +89,40 @@ import img from "../directives/v-image";
 import formatDate from "../directives/v-formatDate";
 
 export default {
+
   props: ['type', 'id, movie'],
 
   components: {MoviesListItem},
 
+  computed:{
+    pageTitle() {
+      return this.listTitle;
+    }
+  },
+
+  created(){
+    this.listTitle = storage.categories["recommendations"];
+  },
+
   data() {
     return {
-      user: {},
+      filmId: this.id,
       movie: {},
-      info: null,
       arraysId: [],
-
+      rating: this.rating,
       //---------
 
-      movieLoaded: false,
-      moviePosterSrc: '',
-      movieBackdropSrc: '',
-
-      actor: {},
-      actorLoaded: false,
-      actorPosterSrc: '',
-      actorBackdropSrc: '',
-      actorNames: [],
       favouriteActorIds: [],
       filmsIdsOfFavouriteActor: [],
-      actorId: '',
-      mostRepeatedActorId: '',
-      filmsOfFavouriteActor: [],
 
-      favorite: '',
-      filmId: this.id,
-      recs: [],
-
-      rating: this.rating,
-      featuredUserFilms: [],
       featuredFilms: [],
+      featuredUserFilms: [],
+      featuredUserFilmsArr: [],
       recommendedFeaturedFilms: [],
       outputRecommendedFeaturedFilms: [],
 
-      featuredUserFilmsArr: [],
       featuredUserGenresArr: [],
       featuredUserGenresIds: [],
-      firstGenresFilms: [],
-      finalGenresArr: [],
       mostRepeatedGenreName: '',
       mostRepeatedGenreId: '',
 
@@ -184,7 +175,6 @@ export default {
               console.log(error);
             }
         );
-    // console.log(this.finalGenresArr);
 
     this.getUserDetails();
 
@@ -322,9 +312,7 @@ export default {
                             console.log(error);
                           }
                       );
-                  // console.log(this.finalGenresArr);
                 });
-
           }
 
           this.mostRepeatedActorId = mostFrequent(this.favouriteActorIds, this.favouriteActorIds.length);
@@ -339,12 +327,8 @@ export default {
                       .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU`)
                       .then((response) => {
                         this.actorMovies.push(response.data);
-
-                        if (this.shortList) {
                           this.actorMovies2 = this.actorMovies.slice(0, 20);
-                        } else {
                           this.actorMovies2 = this.actorMovies
-                        }
                         this.listLoaded = true;
                         if (this.type === "page") {
                           document.title = this.pageTitle;

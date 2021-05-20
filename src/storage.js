@@ -28,6 +28,13 @@ let storage = {
       query: 'now_playing',
       type: 'collection',
       isCategory: true
+    },
+    {
+      title: 'Рекоммендации',
+      shortTitle: 'Рекоммендации',
+      query: 'recommendations',
+      type: 'recommendations',
+      isCategory: true
     }
   ],
   categories: {}
