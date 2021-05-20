@@ -70,7 +70,7 @@ export default {
   created(){
     eventHub.$on('setUserStatus', this.setUserStatus);
     this.user = localStorage.getItem("jwt") ? true : false
-    console.log(this.user)
+    // console.log(this.user);
   }
 }
 </script>

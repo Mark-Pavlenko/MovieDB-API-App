@@ -12,6 +12,13 @@ let routes = [
     }
   },
   {
+    path: '/actors',
+    name: 'actors',
+    components: {
+      'list-router-view': require('./components/ActorsList.vue')
+    }
+  },
+  {
     name: 'home-category',
     path: '/movies/:category',
     components: {
@@ -51,6 +58,13 @@ let routes = [
     path: '/profile',
     components: {
       'search-router-view': require('./views/profile.vue')
+    }
+  },
+  {
+    name: 'recommendations',
+    path: '/recommendations',
+    components: {
+      'search-router-view': require('./views/recommendations.vue')
     }
   }
 ];

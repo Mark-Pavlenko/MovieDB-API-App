@@ -5,35 +5,35 @@
     <header class="header">
       <div class="header__search">
         <input
-          class="header__search-input"
-          type="text"
-          v-model.trim="searchQuery"
-          @keyup.enter="search"
-          @blur="search"
-          placeholder="Введите название фильма..."
+            class="header__search-input"
+            type="text"
+            v-model.trim="searchQuery"
+            @keyup.enter="search"
+            @blur="search"
+            placeholder="Введите название фильма..."
         />
       </div>
     </header>
 
     <movie-popup
-      v-if="moviePopupIsVisible"
-      @close="closeMoviePopup"
-      :id="moviePopupId"
+        v-if="moviePopupIsVisible"
+        @close="closeMoviePopup"
+        :id="moviePopupId"
     ></movie-popup>
 
     <section class="main">
       <transition name="fade" @after-leave="afterLeave">
         <router-view
-          name="list-router-view"
-          :type="'page'"
-          :mode="'collection'"
-          :key="$route.params.category"
+            name="list-router-view"
+            :type="'page'"
+            :mode="'collection'"
+            :key="$route.params.category"
         ></router-view>
         <router-view
-          name="search-router-view"
-          :type="'page'"
-          :mode="'search'"
-          :key="$route.params.query"
+            name="search-router-view"
+            :type="'page'"
+            :mode="'search'"
+            :key="$route.params.query"
         ></router-view>
         <router-view name="page-router-view"></router-view>
       </transition>
@@ -48,7 +48,7 @@ import MoviePopup from "./components/MoviePopup.vue";
 
 export default {
   name: "app",
-  components: { Navigation, MoviePopup },
+  components: {Navigation, MoviePopup},
   data() {
     return {
       moviePopupIsVisible: false,
@@ -89,8 +89,8 @@ export default {
     },
     onHistoryState(e) {
       storage.moviePopupOnHistory = e.state
-        ? e.state.hasOwnProperty("popup")
-        : false;
+          ? e.state.hasOwnProperty("popup")
+          : false;
       if (!storage.moviePopupOnHistory) {
         this.moviePopupIsVisible = false;
         document.querySelector("body").classList.remove("hidden");
@@ -110,7 +110,7 @@ export default {
       if (!this.searchQuery.length) return;
       this.$router.push({
         name: "search",
-        params: { query: this.queryForRouter },
+        params: {query: this.queryForRouter},
       });
     },
     setSearchQuery(clear) {
@@ -326,6 +326,10 @@ img {
   @include tablet-min {
     font-size: 12px;
     padding: 6px 20px 5px 20px;
+  }
+
+  #profileButton{
+    float: right;
   }
 
   body:not(.touch) &:hover {
