@@ -22,14 +22,6 @@
                 <movies-list-item class="movies__item" v-for="movie in outputRecommendedFeaturedFilms"
                                   :movie="movie "></movies-list-item>
               </ul>
-
-<!--              <h1>Test</h1>-->
-
-<!--              <ul class="movies__list">-->
-<!--                <movies-list-item class="movies__item" v-for="movie in this.arrGenres"-->
-<!--                                  :movie="movie "></movies-list-item>-->
-<!--              </ul>-->
-
             </ul>
           </div>
         </div>
@@ -43,8 +35,6 @@
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in this.arrGenres"
-                                  :movie="movie "></movies-list-item>
                 <movies-list-item class="movies__item" v-for="movie in this.genreMovies"
                                   :movie="movie "></movies-list-item>
               </ul>
@@ -101,7 +91,7 @@ export default {
   },
 
   created(){
-    this.listTitle = storage.categories["recommendations"];
+    this.listTitle = "Рекомендации";
   },
 
   data() {
@@ -142,8 +132,7 @@ export default {
       shortList: true,
       finalResult: [],
 
-      genreMovies: [],
-      arrGenres: []
+      genreMovies: []
     };
   },
 
@@ -159,23 +148,6 @@ export default {
       localStorage.setItem('reloaded', '1');
       location.reload();
     };
-
-    //get 1 page of films for genre actors
-    axios
-        .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru&page=1`)
-        .then(function (response) {
-          console.log(response.data);
-          for(let i=0; i < response.data.results.length; i++){
-            this.arrGenres.push(response.data.results[i]);
-          }
-          console.log(this.arrGenres);
-
-        }.bind(this))
-        .catch(
-            function (error) {
-              console.log(error);
-            }
-        );
 
     this.getUserDetails();
 
@@ -291,7 +263,8 @@ export default {
                   for (let k = 0; k < this.featuredUserGenresArr.length; k++) {
                     this.featuredUserGenresIds.push(this.featuredUserGenresArr[k].id);
                   }
-                  // console.log(this.featuredUserGenresIds);
+                  console.log('The array of user`s genre Ids');
+                  console.log(this.featuredUserGenresIds);
 
                   this.mostRepeatedGenreId = mostFrequent(this.featuredUserGenresIds, this.featuredUserGenresIds.length);
                   console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId );

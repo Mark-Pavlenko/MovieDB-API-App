@@ -29,13 +29,13 @@ let storage = {
       type: 'collection',
       isCategory: true
     },
-    {
-      title: 'Рекоммендации',
-      shortTitle: 'Рекоммендации',
-      query: 'recommendations',
-      type: 'recommendations',
-      isCategory: true
-    }
+    // {
+    //   title: 'Рекоммендации',
+    //   shortTitle: 'Рекоммендации',
+    //   query: 'recommendations',
+    //   type: 'recommendations',
+    //   isCategory: true
+    // }
   ],
   categories: {}
 };
