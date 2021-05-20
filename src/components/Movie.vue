@@ -282,10 +282,11 @@ export default {
       try {
         console.log(filmId);
         const userId = JSON.parse(localStorage.getItem('user'))._id;
+        console.log(userId);
         await this.$http.delete(`/user/removeFilm/${filmId}`, {
           data: {
             id: userId,
-            favouriteFilms: filmId
+            favouriteFilms: this.filmId
           }
         })
             .then(response => {

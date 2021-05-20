@@ -71,12 +71,13 @@ exports.addFavouriteActor = async (req, res) => {
 //remove favourite film controller
 exports.removeFavouriteFilm = async (req, res) => {
     try {
+        console.log('13');
         let isUser = await User.findOne({_id: req.body.id})
         let array = isUser.favouriteFilms;
         // console.log(req.body);
         // console.log(array);
         for (let i = 0; i < array.length; i++) {
-            if (req.body.favouriteFilms === array[i].film) {
+            if (req.body.favouriteFilms === array[i].filmId) {
 
                 // let deletedUserId = isUser._id;
                 // let deletedFilmId = array[i]._id;
@@ -94,8 +95,7 @@ exports.removeFavouriteFilm = async (req, res) => {
                         return res.json(updatedUser);
                     });
             }
-        }
-        ;
+        };
     } catch (err) {
         console.log(err);
     }

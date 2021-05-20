@@ -124,7 +124,7 @@ export default {
       pages: "",
       results: "",
       currentPage: 1,
-      listFeaturedFilmsLoaded:false,
+      listFeaturedFilmsLoaded: false,
       listGenresFilmsLoaded: false,
       listActorsFilmsLoaded: false,
 
@@ -132,7 +132,7 @@ export default {
 
       favouriteActorMovies: [],
       outputFavouriteActorMovies: [],
-      outputFeaturedFilmsMovies:[],
+      outputFeaturedFilmsMovies: [],
       shortList: true,
       finalResult: [],
 
@@ -140,7 +140,9 @@ export default {
 
       //-----
       showActorFilmsButton: true,
-      showFeaturedFilmsButton: true
+      showFeaturedFilmsButton: true,
+
+
     };
   },
 
@@ -217,7 +219,7 @@ export default {
                 .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
                 .then((response) => {
                   this.outputRecommendedFeaturedFilms.push(response.data);
-                  this.outputFeaturedFilmsMovies = this.outputRecommendedFeaturedFilms.slice(0,10);
+                  this.outputFeaturedFilmsMovies = this.outputRecommendedFeaturedFilms.slice(0, 10);
                   this.listFeaturedFilmsLoaded = true;
                 });
           }
@@ -271,13 +273,14 @@ export default {
                   for (let k = 0; k < this.featuredUserGenresArr.length; k++) {
                     this.featuredUserGenresIds.push(this.featuredUserGenresArr[k].id);
                   }
-                  console.log('The array of user`s genre Ids');
-                  console.log(this.featuredUserGenresIds);
+                  // console.log('The array of user`s genre Ids');
+                  // console.log(this.featuredUserGenresIds);
 
                   this.mostRepeatedGenreId = mostFrequent(this.featuredUserGenresIds, this.featuredUserGenresIds.length);
-                  console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
+                  // console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
 
-                  if(this.mostRepeatedGenreId){
+                  //put into vue component films with the most popular genre id
+                  if (this.mostRepeatedGenreId) {
                     axios
                         .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru`)
                         .then(function (response) {
@@ -300,9 +303,10 @@ export default {
                 });
           }
 
+          //find the films with favourite actor
           this.mostRepeatedActorId = mostFrequent(this.favouriteActorIds, this.favouriteActorIds.length);
           if (this.mostRepeatedActorId) {
-            console.log('Most repeated actor`s id:' + this.mostRepeatedActorId)
+            // console.log('Most repeated actor`s id:' + this.mostRepeatedActorId);
             axios
                 .get(`https://api.themoviedb.org/3/person/${this.mostRepeatedActorId}/movie_credits?api_key=${storage.apiKey}&language=ru-RU`)
                 .then((response) => {
@@ -326,14 +330,35 @@ export default {
                             }
                         );
                   }
+
+                  console.log('////////////////////////////////////////////')
+                  console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
+                  console.log('The most repeated actor Id: ' + this.mostRepeatedActorId);
+                  //put into vue component films with the most popular genre id
+                  if (this.mostRepeatedGenreId) {
+                    axios
+                        .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru`)
+                        .then(function (response) {
+                          let data = response.data;
+                          console.log(response.data);
+                        })
+                  }
                 });
+
           }
+
+
+          if (this.mostRepeatedActorId && this.mostRepeatedGenreId) {
+
+          }
+
         });
   },
+
   methods: {
 
     //get more films
-    loadMoreFeaturedFilms(){
+    loadMoreFeaturedFilms() {
       this.currentPage++;
       for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
         // console.log(this.recommendedFeaturedFilms[i]);
@@ -353,7 +378,7 @@ export default {
                 this.finalResult = this.outputFeaturedFilmsMovies.concat(result2);
                 this.outputFeaturedFilmsMovies = this.finalResult;
 
-                if(this.finalResult.length === this.outputRecommendedFeaturedFilms.length){
+                if (this.finalResult.length === this.outputRecommendedFeaturedFilms.length) {
                   this.showFeaturedFilmsButton = false;
                 }
               }
@@ -385,7 +410,7 @@ export default {
                     this.finalResult = this.outputFavouriteActorMovies.concat(result2);
                     this.outputFavouriteActorMovies = this.finalResult;
 
-                    if(this.finalResult.length === this.favouriteActorMovies.length){
+                    if (this.finalResult.length === this.favouriteActorMovies.length) {
                       this.showActorFilmsButton = false;
                     }
                   }
