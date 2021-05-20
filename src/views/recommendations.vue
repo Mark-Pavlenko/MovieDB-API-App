@@ -5,7 +5,7 @@
       <h2 class="profile__title">Ваши рекомендации</h2>
       <div class="buttons" style="float: right; margin-top: -30px; ">
         <router-link to="/profile" class="button" style="text-decoration: none;">Профиль</router-link>
-<!--        <button class="button" @click="logUserOut">Выйти</button>-->
+        <!--        <button class="button" @click="logUserOut">Выйти</button>-->
       </div>
 
     </header>
@@ -22,6 +22,14 @@
                 <movies-list-item class="movies__item" v-for="movie in outputRecommendedFeaturedFilms"
                                   :movie="movie "></movies-list-item>
               </ul>
+
+<!--              <h1>Test</h1>-->
+
+<!--              <ul class="movies__list">-->
+<!--                <movies-list-item class="movies__item" v-for="movie in this.arrGenres"-->
+<!--                                  :movie="movie "></movies-list-item>-->
+<!--              </ul>-->
+
             </ul>
           </div>
         </div>
@@ -35,6 +43,8 @@
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
+                <movies-list-item class="movies__item" v-for="movie in this.arrGenres"
+                                  :movie="movie "></movies-list-item>
                 <movies-list-item class="movies__item" v-for="movie in this.genreMovies"
                                   :movie="movie "></movies-list-item>
               </ul>
@@ -64,7 +74,6 @@
           </div>
         </div>
       </div>
-
 
 
     </section>
@@ -130,8 +139,8 @@ export default {
 
       listTitle: "",
       pages: "",
-      // results: "",
-      currentPage: 0,
+      results: "",
+      currentPage: 1,
       listLoaded: false,
 
       //-------------
@@ -142,6 +151,7 @@ export default {
       finalResult: [],
 
       genreMovies: [],
+      arrGenres: []
     };
   },
 
@@ -156,15 +166,25 @@ export default {
     } else {
       localStorage.setItem('reloaded', '1');
       location.reload();
-    }
-    ;
+    };
 
+    //get 1 page of films for genre actors
     axios
         .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru&page=1`)
-        .then(function (resp) {
-          console.log(resp.data.results)
-            // this.genreMovies.push(resp.data.results);
-        });
+        .then(function (response) {
+          console.log(response.data);
+          for(let i=0; i < response.data.results.length; i++){
+            this.arrGenres.push(response.data.results[i]);
+          }
+          console.log(this.arrGenres);
+
+        }.bind(this))
+        .catch(
+            function (error) {
+              console.log(error);
+            }
+        );
+    // console.log(this.finalGenresArr);
 
     this.getUserDetails();
 
@@ -227,6 +247,7 @@ export default {
                 .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
                 .then((response) => {
                   this.outputRecommendedFeaturedFilms.push(response.data);
+                  // console.log(response.data);
                 });
           }
           // console.log(this.outputRecommendedFeaturedFilms);
@@ -288,13 +309,9 @@ export default {
                       .then(function (response) {
                         let data = response.data;
 
-                        if (this.shortList) {
                           this.genreMovies = data.results.slice(0, 10);
                           this.pages = 1;
                           this.results = 10;
-                        } else {
-                          this.genreMovies = data.results;
-                        }
                         this.listLoaded = true;
                         if (this.type === "page") {
                           document.title = this.pageTitle;
@@ -322,6 +339,7 @@ export default {
                       .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU`)
                       .then((response) => {
                         this.actorMovies.push(response.data);
+
                         if (this.shortList) {
                           this.actorMovies2 = this.actorMovies.slice(0, 20);
                         } else {
@@ -331,6 +349,7 @@ export default {
                         if (this.type === "page") {
                           document.title = this.pageTitle;
                         }
+
                       })
                       .catch(
                           function (error) {
@@ -366,9 +385,9 @@ export default {
       this.currentPage++;
       for (let i = 0; i < this.filmsIdsOfFavouriteActor.length; i++) {
         axios
-            .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU&page=${this.currentPage}&sort_by=created_at.desc&page=${this.currentPage}`)
+            .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU&sort_by=created_at.desc&page=${this.currentPage}`)
             .then(function (resp) {
-
+                  console.log(resp.data);
                   // console.log(resp.data);
 
                   if (this.actorMovies !== []) {
@@ -376,17 +395,16 @@ export default {
                     console.log('not empty');
                     // this.finalResult = this.actorMovies.filter(el => !this.actorMovies2.includes(el));
                     let result1 = this.actorMovies.filter(el => !this.actorMovies2.includes(el));
-                    console.log('cut init arr:');
-                    console.log(result1);
+                    // console.log('cut init arr:');
+                    // console.log(result1);
                     let result2 = result1.slice(0, 5);
-                    console.log('5 first elems from cut init arr:');
-                    console.log(result2);
+                    // console.log('5 first elems from cut init arr:');
+                    // console.log(result2);
                     this.finalResult = this.actorMovies2.concat(result2);
-                    console.log('final arr with 10 elements');
-                    console.log(this.finalResult);
+                    // console.log('final arr with 10 elements');
+                    // console.log(this.finalResult);
                     this.actorMovies2 = this.finalResult;
                   }
-
                 }.bind(this)
             )
             .catch(
