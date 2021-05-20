@@ -84,13 +84,13 @@ export default {
 
   components: {MoviesListItem},
 
-  computed:{
+  computed: {
     pageTitle() {
       return this.listTitle;
     }
   },
 
-  created(){
+  created() {
     this.listTitle = "Рекомендации";
   },
 
@@ -98,7 +98,6 @@ export default {
     return {
       filmId: this.id,
       movie: {},
-      arraysId: [],
       rating: this.rating,
       //---------
 
@@ -147,9 +146,8 @@ export default {
     } else {
       localStorage.setItem('reloaded', '1');
       location.reload();
-    };
-
-    this.getUserDetails();
+    }
+    ;
 
     //get movie rating for special user
     axios.get(`http://localhost:4000/user/allUsers`)
@@ -267,76 +265,62 @@ export default {
                   console.log(this.featuredUserGenresIds);
 
                   this.mostRepeatedGenreId = mostFrequent(this.featuredUserGenresIds, this.featuredUserGenresIds.length);
-                  console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId );
-                  axios
-                      .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru`)
-                      .then(function (response) {
-                        let data = response.data;
+                  console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
+                  if(this.mostRepeatedGenreId){
+                    axios
+                        .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru`)
+                        .then(function (response) {
+                          let data = response.data;
 
                           this.genreMovies = data.results.slice(0, 10);
                           this.pages = 1;
                           this.results = 10;
-                        this.listGenresFilmsLoaded = true;
-                        if (this.type === "page") {
-                          document.title = this.pageTitle;
-                        }
-                      }.bind(this))
-                      .catch(
-                          function (error) {
-                            console.log(error);
+                          this.listGenresFilmsLoaded = true;
+                          if (this.type === "page") {
+                            document.title = this.pageTitle;
                           }
-                      );
+                        }.bind(this))
+                        .catch(
+                            function (error) {
+                              console.log(error);
+                            }
+                        );
+                  }
                 });
           }
 
           this.mostRepeatedActorId = mostFrequent(this.favouriteActorIds, this.favouriteActorIds.length);
-          axios
-              .get(`https://api.themoviedb.org/3/person/${this.mostRepeatedActorId}/movie_credits?api_key=${storage.apiKey}&language=ru-RU`)
-              .then((response) => {
-                for (let i = 0; i < response.data.cast.length; i++) {
-                  this.filmsIdsOfFavouriteActor.push(response.data.cast[i].id)
-                }
-                for (let i = 0; i < this.filmsIdsOfFavouriteActor.length; i++) {
-                  axios
-                      .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU`)
-                      .then((response) => {
-                        this.actorMovies.push(response.data);
+          if (this.mostRepeatedActorId) {
+            axios
+                .get(`https://api.themoviedb.org/3/person/${this.mostRepeatedActorId}/movie_credits?api_key=${storage.apiKey}&language=ru-RU`)
+                .then((response) => {
+                  for (let i = 0; i < response.data.cast.length; i++) {
+                    this.filmsIdsOfFavouriteActor.push(response.data.cast[i].id)
+                  }
+                  for (let i = 0; i < this.filmsIdsOfFavouriteActor.length; i++) {
+                    axios
+                        .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU`)
+                        .then((response) => {
+                          this.actorMovies.push(response.data);
                           this.actorMovies2 = this.actorMovies.slice(0, 20);
                           this.actorMovies2 = this.actorMovies
-                        this.listActorsFilmsLoaded = true;
-                        if (this.type === "page") {
-                          document.title = this.pageTitle;
-                        }
-
-                      })
-                      .catch(
-                          function (error) {
-                            console.log(error);
+                          this.listActorsFilmsLoaded = true;
+                          if (this.type === "page") {
+                            document.title = this.pageTitle;
                           }
-                      );
-                }
-              });
+
+                        })
+                        .catch(
+                            function (error) {
+                              console.log(error);
+                            }
+                        );
+                  }
+                });
+          }
         });
   },
   methods: {
-    async getUserDetails() {
-      const userId = JSON.parse(localStorage.getItem('user'))._id;
-      // console.log(userId)
-      await this.$http.get(`user/getUser/${userId}`)
-          .then((response) => {
-            this.user = response.data
-            for (let film in this.user.favouriteFilms) {
-              let filmId = this.user.favouriteFilms[film]
-              // console.log(this.user)
-              axios
-                  .get(`https://api.themoviedb.org/3/movie/${filmId.filmId}?api_key=${storage.apiKey}&language=ru`)
-                  .then((response) => {
-                    this.arraysId.push(response.data)
-                  });
-            }
-            // console.log(this.arraysId)
-          });
-    },
 
     //get more films
     loadMoreActorsFilms() {
