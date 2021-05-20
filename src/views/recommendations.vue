@@ -53,12 +53,12 @@
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in actorMovies2"
+                <movies-list-item class="movies__item" v-for="movie in outputFavouriteActorMovies"
                                   :movie="movie "></movies-list-item>
               </ul>
 
               <div class="movies__nav">
-                <button @click="loadMoreActorsFilms" class="button">Показать все</button>
+                <button v-if="showActorFilmsButton" @click="loadMoreActorsFilms" class="button">Показать все</button>
               </div>
             </ul>
           </div>
@@ -127,11 +127,14 @@ export default {
       //-------------
 
       favouriteActorMovies: [],
-      actorMovies2: [],
+      outputFavouriteActorMovies: [],
       shortList: true,
       finalResult: [],
 
-      genreMovies: []
+      genreMovies: [],
+
+      //-----
+      showActorFilmsButton: true
     };
   },
 
@@ -299,18 +302,16 @@ export default {
                     this.filmsIdsOfFavouriteActor.push(response.data.cast[i].id)
                   }
 
-
-
                   for (let i = 0; i < this.filmsIdsOfFavouriteActor.length; i++) {
-                    console.log(this.filmsIdsOfFavouriteActor[i]);
+                    // console.log(this.filmsIdsOfFavouriteActor[i]);
                     axios
                         .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU`)
                         .then((response) => {
-                          console.log(response.data);
+                          // console.log(response.data);
                           this.favouriteActorMovies.push(response.data);
 
-                          this.actorMovies2 = this.favouriteActorMovies.slice(0, 10);
-                          // this.actorMovies2 = this.favouriteActorMovies
+                          this.outputFavouriteActorMovies = this.favouriteActorMovies.slice(0, 10);
+                          // this.outputFavouriteActorMovies = this.favouriteActorMovies
                           this.listActorsFilmsLoaded = true;
                           // if (this.type === "page") {
                           //   document.title = this.pageTitle;
@@ -336,23 +337,32 @@ export default {
         axios
             .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU&page=${this.currentPage}`)
             .then(function (resp) {
-                  console.log(resp.data);
+                  // console.log(resp.data);
                   // console.log(resp.data);
 
                   if (this.favouriteActorMovies) {
 
-                    console.log('not empty');
-                    // this.finalResult = this.actorMovies.filter(el => !this.actorMovies2.includes(el));
-                    let result1 = this.favouriteActorMovies.filter(el => !this.actorMovies2.includes(el));
+                    // console.log('not empty');
+                    // this.finalResult = this.actorMovies.filter(el => !this.outputFavouriteActorMovies.includes(el));
+                    let result1 = this.favouriteActorMovies.filter(el => !this.outputFavouriteActorMovies.includes(el));
                     // console.log('cut init arr:');
                     // console.log(result1);
                     let result2 = result1.slice(0, 5);
                     // console.log('5 first elems from cut init arr:');
                     // console.log(result2);
-                    this.finalResult = this.actorMovies2.concat(result2);
+                    this.finalResult = this.outputFavouriteActorMovies.concat(result2);
+                    this.outputFavouriteActorMovies = this.finalResult;
+
+                    if(this.finalResult.length === this.favouriteActorMovies.length){
+                      this.showActorFilmsButton = false;
+                    }
+
                     // console.log('final arr with 10 elements');
                     // console.log(this.finalResult);
-                    this.actorMovies2 = this.finalResult;
+                    // console.log(this.favouriteActorMovies);
+
+
+                    // if(this.finalResult)
                   }
                 }.bind(this)
             )
