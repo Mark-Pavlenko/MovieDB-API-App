@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <div class="container mt-5" v-if="listLoaded">
+      <div class="container mt-5" v-if="listGenresFilmsLoaded">
         <div class="row">
           <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
             Рекомендуемые фильмы вашего любимого жанра
@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <div class="container mt-5" v-if="listLoaded">
+      <div class="container mt-5" v-if="listActorsFilmsLoaded">
         <div class="row">
           <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
             Рекомендуемые фильмы с вашим любимым актером</h1>
@@ -132,7 +132,8 @@ export default {
       pages: "",
       results: "",
       currentPage: 1,
-      listLoaded: false,
+      listGenresFilmsLoaded: false,
+      listActorsFilmsLoaded: false,
 
       //-------------
 
@@ -293,16 +294,16 @@ export default {
                   // console.log(this.featuredUserGenresIds);
 
                   this.mostRepeatedGenreId = mostFrequent(this.featuredUserGenresIds, this.featuredUserGenresIds.length);
-                  //console.log('The most popular user`s genre Id: ' + mostRepeated);
+                  console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId );
                   axios
-                      .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenre}&language=ru`)
+                      .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru`)
                       .then(function (response) {
                         let data = response.data;
 
                           this.genreMovies = data.results.slice(0, 10);
                           this.pages = 1;
                           this.results = 10;
-                        this.listLoaded = true;
+                        this.listGenresFilmsLoaded = true;
                         if (this.type === "page") {
                           document.title = this.pageTitle;
                         }
@@ -329,7 +330,7 @@ export default {
                         this.actorMovies.push(response.data);
                           this.actorMovies2 = this.actorMovies.slice(0, 20);
                           this.actorMovies2 = this.actorMovies
-                        this.listLoaded = true;
+                        this.listActorsFilmsLoaded = true;
                         if (this.type === "page") {
                           document.title = this.pageTitle;
                         }
