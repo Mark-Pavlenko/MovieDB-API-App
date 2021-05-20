@@ -118,6 +118,7 @@ export default {
       mostRepeatedGenreName: '',
       mostRepeatedGenreId: '',
 
+
       //--------
 
       listTitle: "",
@@ -335,13 +336,32 @@ export default {
                   console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
                   console.log('The most repeated actor Id: ' + this.mostRepeatedActorId);
                   //put into vue component films with the most popular genre id
-                  if (this.mostRepeatedGenreId) {
+                  if (this.mostRepeatedGenreId && this.mostRepeatedActorId) {
                     axios
                         .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru`)
-                        .then(function (response) {
-                          let data = response.data;
-                          console.log(response.data);
-                        })
+                        .then((response) => {
+                          let mostRepeatedGenreFilmsIdArr = [];
+                          console.log(response.data.results);
+                          for (let i = 0; i < response.data.results.length; i++) {
+                            // console.log(response.data.results[i].id);
+                            mostRepeatedGenreFilmsIdArr.push(response.data.results[i].id);
+                          }
+                          console.log(mostRepeatedGenreFilmsIdArr);
+
+                          console.log('all id and cast data for films of favourite genre');
+                          for (let j = 0; j < mostRepeatedGenreFilmsIdArr.length; j++) {
+                            axios.get(`https://api.themoviedb.org/3/movie/${mostRepeatedGenreFilmsIdArr[j]}/credits?api_key=${storage.apiKey}&language=ru-RU`)
+                                .then(response => {
+
+                                  console.log(response.data);
+                                }).catch(error => {
+                              console.log(error);
+                            })
+                          }
+
+                        }).catch(error => {
+                      console.log(error);
+                    })
                   }
                 });
 
