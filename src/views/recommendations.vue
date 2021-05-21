@@ -75,7 +75,7 @@
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in this.testArr5"
+                <movies-list-item class="movies__item" v-for="movie in this.testArr3"
                                   :movie="movie "></movies-list-item>
               </ul>
 
@@ -166,6 +166,7 @@ export default {
       //-----
       favouriteGenreWithActorFilms: [],
       testArr: [],
+      testArr2: [],
       testArr3: [],
       testArr4: [],
       testArr5: [],
@@ -414,23 +415,17 @@ export default {
                                   .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
                                   .then(response => {
                                     //console.log(response.data);
-                                    this.testArr3.push(response.data);
+                                    this.testArr2.push(response.data);
                                     // console.log(this.testArr3);
-
-                                    const arr = [
-                                      {place: "here",  name: "x", other: "other stuff1" },
-                                      {place: "there", name: "x", other: "other stuff2" },
-                                      {place: "here",  name: "y", other: "other stuff4" },
-                                      {place: "here",  name: "z", other: "other stuff5" }
-                                    ]
 
                                     function getUniqueListBy(arr, key) {
                                       return [...new Map(arr.map(item => [item[key], item])).values()]
                                     }
 
-                                    this.testArr5 = getUniqueListBy(this.testArr3, 'id')
-                                    console.log(this.testArr5);
-                                    this.testArr5.push(this.testArr4);
+                                    this.testArr3 = getUniqueListBy(this.testArr2, 'id')
+                                    console.log(this.testArr3);
+                                    this.testArr3.push(this.favouriteGenreWithActorFilms);
+                                    // console.log(this.favouriteGenreWithActorFilms);
                                     // console.log("Unique by place")
                                     // console.log(JSON.stringify(arr1))
 
@@ -440,13 +435,7 @@ export default {
                                     // console.log(JSON.stringify(arr2))
 
 
-                                    // this.favouriteGenreWithActorFilms = array.filter(function (elem, pos) {
-                                    //   return array.indexOf(elem) === pos;
-                                    // });
-                                    // console.log(this.favouriteGenreWithActorFilms);
-                                    // this.testArr2.push(response.data);
-                                    // console.log(this.testArr2);
-                                    // array.push(this.favouriteGenreWithActorFilms);
+
                                   }).catch(error => {
                                 console.log(error);
                               });
