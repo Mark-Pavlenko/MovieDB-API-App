@@ -18,7 +18,7 @@
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in arraysId"
+                <movies-list-item class="movies__item" v-for="movie in userData"
                                   :movie="movie "></movies-list-item>
               </ul>
             </ul>
@@ -43,7 +43,7 @@ export default {
       user: {},
       movie: {},
       info: null,
-      arraysId: []
+      userData: []
     };
   },
   mounted() {
@@ -62,17 +62,21 @@ export default {
       console.log(userId)
       await this.$http.get(`user/getUser/${userId}`)
           .then((response) => {
-            this.user = response.data
+            this.user = response.data;
+            console.log(this.user);
             for (let film in this.user.favouriteFilms) {
               let filmId = this.user.favouriteFilms[film]
-              console.log(this.user)
               axios
                   .get(`https://api.themoviedb.org/3/movie/${filmId.filmId}?api_key=${storage.apiKey}&language=ru`)
                   .then((response) => {
-                    this.arraysId.push(response.data)
+                    this.userData.push(response.data);
+                    // console.log(this.userData);
+                    for(let i=0; i <this.userData.length; i++){
+                      console.log(this.userData[i].id);
+                    }
                   });
             }
-            console.log(this.arraysId)
+
           });
     },
     logUserOut() {

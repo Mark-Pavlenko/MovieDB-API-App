@@ -77,9 +77,6 @@
               <movies-list-item class="movies__item" v-for="movie in this.testArr5"
                                 :movie="movie "></movies-list-item>
             </ul>
-<!--            <div class="movies__nav" v-if="showActorAndGenresFilmsButton">-->
-<!--              <button @click="loadMoreActorsAndGenresFilms" class="button">Показать все</button>-->
-<!--            </div>-->
           </div>
         </div>
       </div>
@@ -170,6 +167,7 @@ export default {
       testArr4: [],
       testArr5: [],
       testArr6: [],
+      userData: []
 
     };
   },
@@ -180,6 +178,8 @@ export default {
   },
 
   mounted() {
+    //get user details
+    this.getUserDetails();
 
     //get movie rating
     this.getMovieRating();
@@ -199,6 +199,30 @@ export default {
   },
 
   methods: {
+
+    async getUserDetails() {
+      const userId = JSON.parse(localStorage.getItem('user'))._id;
+      console.log(userId)
+      await this.$http.get(`user/getUser/${userId}`)
+          .then((response) => {
+            this.user = response.data
+            for (let film in this.user.favouriteFilms) {
+              let filmId = this.user.favouriteFilms[film];
+              // console.log(this.user);
+              axios
+                  .get(`https://api.themoviedb.org/3/movie/${filmId.filmId}?api_key=${storage.apiKey}&language=ru`)
+                  .then((response) => {
+                    // console.log(response.data);
+                    this.userData.push(response.data);
+                    // console.log(this.userData);
+                    // for(let i=0; i < this.userData.length; i++){
+                    //   console.log(this.userData[i].id);
+                    // }
+                  });
+            }
+
+          });
+    },
 
     //get film rating
     getMovieRating() {
@@ -226,6 +250,12 @@ export default {
       axios.get(`http://localhost:4000/user/allUsers`)
           .then(response => {
             let users = response.data;
+
+            // console.log(this.featuredFilms);
+
+            //Все ID фильмов, которые в избранных
+            //console.log(this.userData);
+
             // console.log(response.data);
 
             //get featuredFilms and featuredUserFilms arrays
@@ -244,34 +274,58 @@ export default {
                 }
 
               } else {
-                //get featuredFilms  arrays
+                //get featuredFilms arrays
                 for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
                   this.featuredFilms.push(this.users[i].featuredFilms[j].filmId);
+                  // for (let z = 0; z < this.userData.length; z++) {
+                  //   console.log(this.userData[z].id);
+                  //   console.log(this.users[i].featuredFilms[j].filmId);
+                  //   if(this.userData[z].id === this.users[i].featuredFilms[j].filmId){
+                  //     console.log('123');
+                  //   }
+                  // }
                 }
               }
             }
+            //
+            // for(let i = 0; i < this.userData.length; i++){
+            //   console.log(this.userData[i].id);
+            //   for(let j=0; j < this.featuredFilms.length; i++) {
+            //
+            //   }
+            // }
 
-            // console.log(this.featuredFilms);
-            // console.log(this.featuredUserFilms);
-            let array = this.featuredFilms;
-            this.recommendedFeaturedFilms = array.filter(function (elem, pos) {
-              return array.indexOf(elem) === pos;
-            });
-            // console.log(this.recommendedFeaturedFilms);
-            for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
-              // console.log(this.recommendedFeaturedFilms[i]);
-              axios
-                  .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
-                  .then((response) => {
-                    this.outputRecommendedFeaturedFilms.push(response.data);
-                    this.outputFeaturedFilmsMovies = this.outputRecommendedFeaturedFilms.slice(0, 10);
-                    this.listFeaturedFilmsLoaded = true;
-                    if (this.outputRecommendedFeaturedFilms.length > 10) {
-                      this.showFeaturedFilmsButton = true
-                    }
-                  });
-            }
-            // console.log(this.outputRecommendedFeaturedFilms);
+
+                // for (let i = 0; i < this.userData.length; i++) {
+                //   for(let j=0; j < this.featuredFilms.length; i++){
+                //       console.log(this.userData[i].id);
+                //       console.log(this.featuredFilms[i])
+                //   }
+                // }
+
+                // console.log(this.featuredFilms);
+                //console.log(this.featuredUserFilms);
+
+
+                let array = this.featuredFilms;
+
+                this.recommendedFeaturedFilms = array.filter(function (elem, pos) {
+                  return array.indexOf(elem) === pos;
+                });
+                // console.log(this.recommendedFeaturedFilms);
+              for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
+                // console.log(this.recommendedFeaturedFilms[i]);
+                axios
+                    .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
+                    .then((response) => {
+                      this.outputRecommendedFeaturedFilms.push(response.data);
+                      this.outputFeaturedFilmsMovies = this.outputRecommendedFeaturedFilms.slice(0, 10);
+                      this.listFeaturedFilmsLoaded = true;
+                      if (this.outputRecommendedFeaturedFilms.length > 10) {
+                        this.showFeaturedFilmsButton = true
+                      }
+                    });
+              }
           });
     },
 
@@ -395,10 +449,10 @@ export default {
     getFavouriteGenreWithActorFilms() {
       axios.get(`http://localhost:4000/user/allUsers`)
           .then(response => {
-            console.log(this.mostRepeatedGenreId);
+            // console.log(this.mostRepeatedGenreId);
             if (this.mostRepeatedActorId && this.mostRepeatedGenreId) {
-              console.log('The most fav genre of films id ' + this.mostRepeatedGenreId);
-              console.log(this.filmsIdsOfFavouriteActor);
+              // console.log('The most fav genre of films id ' + this.mostRepeatedGenreId);
+              // console.log(this.filmsIdsOfFavouriteActor);
 
               for (let id in this.filmsIdsOfFavouriteActor) {
                 let actorFilmId = this.filmsIdsOfFavouriteActor[id];
@@ -412,13 +466,13 @@ export default {
                         if (this.mostRepeatedGenreId === testObject.filmGenres[j].id) {
                           // console.log(testObject);
                           this.testArr.push(testObject.filmId);
-                          console.log(this.testArr);
-                          //
+                          //console.log(this.testArr);
+
                           for (let k = 0; k < this.testArr.length; k++) {
                             axios
                                 .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
                                 .then(response => {
-                                  console.log(response.data);
+                                  //console.log(response.data);
 
                                   this.testArr2.push(response.data);
 
@@ -484,7 +538,6 @@ export default {
       }
     },
 
-
     //button to load more genre films
     loadMoreGenreFilms() {
       this.currentPage++;
@@ -538,11 +591,6 @@ export default {
             );
       }
     },
-
-    //button to load more genre with actor films
-    loadMoreActorsAndGenresFilms() {
-
-    }
 
   },
 }
