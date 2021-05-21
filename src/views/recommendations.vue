@@ -393,80 +393,38 @@ export default {
             console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
             console.log('The most repeated actor Id: ' + this.mostRepeatedActorId);
             //put into vue component films with the most popular genre id
+
             if (this.mostRepeatedGenreId && this.mostRepeatedActorId) {
 
-              axios
-                  .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru`)
-                  .then((response) => {
-                    let mostRepeatedGenreFilmsIdArr = [];
-                    let testArr = [];
-                    // console.log(response.data.results);
-                    for (let i = 0; i < response.data.results.length; i++) {
-                      // console.log(response.data.results[i].id);
-                      mostRepeatedGenreFilmsIdArr.push(response.data.results[i].id);
-                    }
-                    // console.log('Array of films with the most repeated genre ');
-                    // console.log(mostRepeatedGenreFilmsIdArr);
+              // console.log('all id and cast data for films of favourite genre(first page)');
+              // console.log('object with id and crew of the films with the most repeated genre');
+              if (this.mostRepeatedActorId && this.mostRepeatedGenreId) {
+                for (let i = 0; i < this.filmsIdsOfFavouriteActor.length; i++) {
+                  // console.log(this.filmsIdsOfFavouriteActor[i]);
+                  axios
+                      .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU`)
+                      .then((response) => {
+                        this.testObject = {filmId: response.data.id, filmGenres: response.data.genres};
+                        // console.log(this.testObject);
 
-                    // console.log('all id and cast data for films of favourite genre(first page)');
-                    // console.log('object with id and crew of the films with the most repeated genre');
-                    if (this.mostRepeatedActorId && this.mostRepeatedGenreId) {
-                      for (let i = 0; i < this.filmsIdsOfFavouriteActor.length; i++) {
-                        // console.log(this.filmsIdsOfFavouriteActor[i]);
-                        axios
-                            .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU`)
-                            .then((response) => {
-                              let object = {filmId: response.data.id, filmGenres: response.data.genres};
-                              // console.log(response.data);
-                              // console.log(response.data.genres);
-
-                              for (let j = 0, l = object.filmGenres.length; j < l; j++) {
-                                // console.log(object.filmGenres[i].id);
-
-                                if (this.mostRepeatedGenreId === object.filmGenres[j].id) {
-                                  // console.log(object);
-                                  this.testArr.push(object.filmId);
-                                  // console.log(this.testArr);
-                                }
-                              }
-
-                              // console.log(this.testArr);
-
-                            }).catch(error => {
-                          console.log(error);
-                        });
-
-                      }
-                    }
-
-                    console.log(this.testArr);
-                    setTimeout(() => {
-                      console.log(this.testArr.length);
-                      for (let film = 0; film <= this.testArr.length; film++) {
-                        // let filmId = this.testArr[film];
-                        console.log(film);
-                        axios
-                            .get(`https://api.themoviedb.org/3/movie/${film}?api_key=${storage.apiKey}&language=ru-RU`)
-                            .then(response => {
-                              console.log(response.data);
-
-                              // let filteredArr = [];
-                              // filteredArr.push(response.data);
-                              // console.log(filteredArr);
-                              this.favouriteGenreWithActorFilms.push(response.data);
-                            }).catch(error => {
-                          console.log(error);
-                        });
-
-                      }
-                    })
-                  }, 1000)
+                        for (let j = 0, l = this.testObject.filmGenres.length; j < l; j++) {
+                          // console.log(object.filmGenres[i].id);
+                          if (this.mostRepeatedGenreId === this.testObject.filmGenres[j].id) {
+                            // console.log(object);
+                            this.testArr.push(this.testObject.filmId);
+                            // console.log(this.testArr);
+                          }
+                        }
+                        console.log(this.testObject);
+                        console.log(this.testArr);
+                      });
+                }
+              }
             }
           });
-
     },
 
-    //get more films
+    //button to load all featured films
     loadMoreFeaturedFilms() {
       this.currentPage++;
       for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
@@ -499,6 +457,7 @@ export default {
       }
     },
 
+    //button to load all actors films
     loadMoreActorsFilms() {
       this.currentPage++;
       for (let i = 0; i < this.filmsIdsOfFavouriteActor.length; i++) {
@@ -534,12 +493,13 @@ export default {
       }
     },
 
+    //button to load more genre films
     loadMoreGenreFilms() {
       this.currentPage++;
       axios
           .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru&page=${this.currentPage}`)
           .then(function (resp) {
-                console.log(resp.data);
+                // console.log(resp.data);
                 let data = resp.data;
                 let genreData = this.genreMovies.concat(data.results);
                 this.genreMovies = genreData;
