@@ -75,13 +75,13 @@
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in this.favouriteGenreWithActorFilms"
+                <movies-list-item class="movies__item" v-for="movie in this.testArr5"
                                   :movie="movie "></movies-list-item>
               </ul>
 
-              <!--              <div class="movies__nav" v-if="showActorFilmsButton">-->
-              <!--                <button @click="loadMoreActorsFilms" class="button">Показать все</button>-->
-              <!--              </div>-->
+<!--                            <div class="movies__nav" v-if="showActorAndGenresFilmsButton">-->
+<!--                              <button @click="loadMoreActorsAndGenresFilms" class="button">Показать все</button>-->
+<!--                            </div>-->
             </ul>
           </div>
         </div>
@@ -149,6 +149,7 @@ export default {
       listFeaturedFilmsLoaded: false,
       listGenresFilmsLoaded: false,
       listActorsFilmsLoaded: false,
+      // listActorsAndGenreFilmsLoaded: false,
 
       //-------------
 
@@ -161,7 +162,8 @@ export default {
 
       //-----
       showActorFilmsButton: true,
-      showFeaturedFilmsButton: true,
+      showFeaturedFilmsButton: false,
+      showActorAndGenresFilmsButton: true,
 
       //-----
       favouriteGenreWithActorFilms: [],
@@ -267,6 +269,9 @@ export default {
                     this.outputRecommendedFeaturedFilms.push(response.data);
                     this.outputFeaturedFilmsMovies = this.outputRecommendedFeaturedFilms.slice(0, 10);
                     this.listFeaturedFilmsLoaded = true;
+                    if(this.outputRecommendedFeaturedFilms.length > 10){
+                      this.showFeaturedFilmsButton = true
+                    }
                   });
             }
             // console.log(this.outputRecommendedFeaturedFilms);
@@ -415,7 +420,7 @@ export default {
                                   .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
                                   .then(response => {
                                     //console.log(response.data);
-                                    
+
                                     this.testArr2.push(response.data);
                                     // console.log(this.testArr3);
 
@@ -424,18 +429,9 @@ export default {
                                     }
 
                                     this.favouriteGenreWithActorFilms = getUniqueListBy(this.testArr2, 'id')
-                                    console.log(this.favouriteGenreWithActorFilms);
-
-
                                     // console.log(this.favouriteGenreWithActorFilms);
-                                    // console.log("Unique by place")
-                                    // console.log(JSON.stringify(arr1))
-
-                                    // console.log("\nUnique by name")
-                                    // const arr2 = getUniqueListBy(arr, '')
-                                    //
-                                    // console.log(JSON.stringify(arr2))
-
+                                    this.testArr5 = this.favouriteActorMovies.slice(0, 10);
+                                    // this.listActorsAndGenreFilmsLoaded = true;
 
 
                                   }).catch(error => {
@@ -476,6 +472,10 @@ export default {
                 if (this.finalResult.length === this.outputRecommendedFeaturedFilms.length) {
                   this.showFeaturedFilmsButton = false;
                 }
+                else if(this.finalResult.length < 10){
+                  this.showFeaturedFilmsButton = false;
+                }
+                console.log(this.outputFeaturedFilmsMovies.length);
               }
               //
               // this.outputRecommendedFeaturedFilms.push(response.data);
@@ -483,6 +483,26 @@ export default {
               // this.listFeaturedFilmsLoaded = true;
             })
       }
+    },
+
+
+
+    //button to load more genre films
+    loadMoreGenreFilms() {
+      this.currentPage++;
+      axios
+          .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru&page=${this.currentPage}`)
+          .then(function (resp) {
+                // console.log(resp.data);
+                let data = resp.data;
+                let genreData = this.genreMovies.concat(data.results);
+                this.genreMovies = genreData;
+              }.bind(this)
+          ).catch(
+          function (error) {
+            console.log(error);
+          }
+      );
     },
 
     //button to load all actors films
@@ -521,23 +541,10 @@ export default {
       }
     },
 
-    //button to load more genre films
-    loadMoreGenreFilms() {
-      this.currentPage++;
-      axios
-          .get(`https://api.themoviedb.org/3/discover/movie?api_key=${storage.apiKey}&with_genres=${this.mostRepeatedGenreId}&language=ru&page=${this.currentPage}`)
-          .then(function (resp) {
-                // console.log(resp.data);
-                let data = resp.data;
-                let genreData = this.genreMovies.concat(data.results);
-                this.genreMovies = genreData;
-              }.bind(this)
-          ).catch(
-          function (error) {
-            console.log(error);
-          }
-      );
-    },
+    //button to load more genre with actor films
+    loadMoreActorsAndGenresFilms(){
+
+    }
 
   },
 }
