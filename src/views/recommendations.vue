@@ -73,16 +73,13 @@
           <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
             Рекомендуемые фильмы вашего любимого жанра с вашим любимым актером</h1>
           <div class="col-md-12">
-            <ul class="list-group">
-              <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in this.testArr5"
-                                  :movie="movie "></movies-list-item>
-              </ul>
-
-<!--                            <div class="movies__nav" v-if="showActorAndGenresFilmsButton">-->
-<!--                              <button @click="loadMoreActorsAndGenresFilms" class="button">Показать все</button>-->
-<!--                            </div>-->
+            <ul class="movies__list">
+              <movies-list-item class="movies__item" v-for="movie in this.testArr5"
+                                :movie="movie "></movies-list-item>
             </ul>
+<!--            <div class="movies__nav" v-if="showActorAndGenresFilmsButton">-->
+<!--              <button @click="loadMoreActorsAndGenresFilms" class="button">Показать все</button>-->
+<!--            </div>-->
           </div>
         </div>
       </div>
@@ -269,7 +266,7 @@ export default {
                     this.outputRecommendedFeaturedFilms.push(response.data);
                     this.outputFeaturedFilmsMovies = this.outputRecommendedFeaturedFilms.slice(0, 10);
                     this.listFeaturedFilmsLoaded = true;
-                    if(this.outputRecommendedFeaturedFilms.length > 10){
+                    if (this.outputRecommendedFeaturedFilms.length > 10) {
                       this.showFeaturedFilmsButton = true
                     }
                   });
@@ -398,52 +395,55 @@ export default {
     getFavouriteGenreWithActorFilms() {
       axios.get(`http://localhost:4000/user/allUsers`)
           .then(response => {
-              if (this.mostRepeatedActorId && this.mostRepeatedGenreId) {
-                console.log(this.filmsIdsOfFavouriteActor);
+            console.log(this.mostRepeatedGenreId);
+            if (this.mostRepeatedActorId && this.mostRepeatedGenreId) {
+              console.log('The most fav genre of films id ' + this.mostRepeatedGenreId);
+              console.log(this.filmsIdsOfFavouriteActor);
 
-                for (let id in this.filmsIdsOfFavouriteActor) {
-                  let actorFilmId = this.filmsIdsOfFavouriteActor[id];
-                  axios
-                      .get(`https://api.themoviedb.org/3/movie/${actorFilmId}?api_key=${storage.apiKey}&language=ru-RU`)
-                      .then((response) => {
-                        let testObject = {filmId: response.data.id, filmGenres: response.data.genres};
-                        // console.log(testObject);
-                        for (let j = 0, l = testObject.filmGenres.length; j < l; j++) {
-                          //console.log(testObject.filmGenres[j].id);
-                          if (this.mostRepeatedGenreId === testObject.filmGenres[j].id) {
-                            // console.log(testObject);
-                            this.testArr.push(testObject.filmId);
-                            // console.log(this.testArr);
-                            //
-                            for (let k = 0; k < this.testArr.length; k++) {
-                              axios
-                                  .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
-                                  .then(response => {
-                                    //console.log(response.data);
+              for (let id in this.filmsIdsOfFavouriteActor) {
+                let actorFilmId = this.filmsIdsOfFavouriteActor[id];
+                axios
+                    .get(`https://api.themoviedb.org/3/movie/${actorFilmId}?api_key=${storage.apiKey}&language=ru-RU`)
+                    .then((response) => {
+                      let testObject = {filmId: response.data.id, filmGenres: response.data.genres};
+                      // console.log(testObject);
+                      for (let j = 0, l = testObject.filmGenres.length; j < l; j++) {
+                        //console.log(testObject.filmGenres[j].id);
+                        if (this.mostRepeatedGenreId === testObject.filmGenres[j].id) {
+                          // console.log(testObject);
+                          this.testArr.push(testObject.filmId);
+                          console.log(this.testArr);
+                          //
+                          for (let k = 0; k < this.testArr.length; k++) {
+                            axios
+                                .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
+                                .then(response => {
+                                  console.log(response.data);
 
-                                    this.testArr2.push(response.data);
-                                    // console.log(this.testArr3);
+                                  this.testArr2.push(response.data);
 
-                                    function getUniqueListBy(arr, key) {
-                                      return [...new Map(arr.map(item => [item[key], item])).values()]
-                                    }
+                                  // console.log(this.testArr3);
 
-                                    this.favouriteGenreWithActorFilms = getUniqueListBy(this.testArr2, 'id')
-                                    // console.log(this.favouriteGenreWithActorFilms);
-                                    this.testArr5 = this.favouriteActorMovies.slice(0, 10);
-                                    // this.listActorsAndGenreFilmsLoaded = true;
+                                  function getUniqueListBy(arr, key) {
+                                    return [...new Map(arr.map(item => [item[key], item])).values()]
+                                  }
+
+                                  this.favouriteGenreWithActorFilms = getUniqueListBy(this.testArr2, 'id')
+                                  // console.log(this.favouriteGenreWithActorFilms);
+                                  this.testArr5 = this.favouriteGenreWithActorFilms.slice(0, 10);
+                                  // this.listActorsAndGenreFilmsLoaded = true;
 
 
-                                  }).catch(error => {
-                                console.log(error);
-                              });
-                            }
+                                }).catch(error => {
+                              console.log(error);
+                            });
                           }
                         }
-                      });
-                }
-
+                      }
+                    });
               }
+
+            }
 
           });
     },
@@ -471,8 +471,7 @@ export default {
 
                 if (this.finalResult.length === this.outputRecommendedFeaturedFilms.length) {
                   this.showFeaturedFilmsButton = false;
-                }
-                else if(this.finalResult.length < 10){
+                } else if (this.finalResult.length < 10) {
                   this.showFeaturedFilmsButton = false;
                 }
                 console.log(this.outputFeaturedFilmsMovies.length);
@@ -484,7 +483,6 @@ export default {
             })
       }
     },
-
 
 
     //button to load more genre films
@@ -542,7 +540,7 @@ export default {
     },
 
     //button to load more genre with actor films
-    loadMoreActorsAndGenresFilms(){
+    loadMoreActorsAndGenresFilms() {
 
     }
 
