@@ -75,7 +75,7 @@
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in this.favouriteGenreWithActorFilms"
+                <movies-list-item class="movies__item" v-for="movie in this.testArr5"
                                   :movie="movie "></movies-list-item>
               </ul>
 
@@ -165,7 +165,11 @@ export default {
 
       //-----
       favouriteGenreWithActorFilms: [],
-      testArr: []
+      testArr: [],
+      testArr3: [],
+      testArr4: [],
+      testArr5: [],
+      testArr6: [],
 
     };
   },
@@ -388,39 +392,72 @@ export default {
     getFavouriteGenreWithActorFilms() {
       axios.get(`http://localhost:4000/user/allUsers`)
           .then(response => {
-
-            console.log('////////////////////////////////////////////')
-            console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
-            console.log('The most repeated actor Id: ' + this.mostRepeatedActorId);
-            //put into vue component films with the most popular genre id
-
-            if (this.mostRepeatedGenreId && this.mostRepeatedActorId) {
-
-              // console.log('all id and cast data for films of favourite genre(first page)');
-              // console.log('object with id and crew of the films with the most repeated genre');
               if (this.mostRepeatedActorId && this.mostRepeatedGenreId) {
-                for (let i = 0; i < this.filmsIdsOfFavouriteActor.length; i++) {
-                  // console.log(this.filmsIdsOfFavouriteActor[i]);
-                  axios
-                      .get(`https://api.themoviedb.org/3/movie/${this.filmsIdsOfFavouriteActor[i]}?api_key=${storage.apiKey}&language=ru-RU`)
-                      .then((response) => {
-                        this.testObject = {filmId: response.data.id, filmGenres: response.data.genres};
-                        // console.log(this.testObject);
+                console.log(this.filmsIdsOfFavouriteActor);
 
-                        for (let j = 0, l = this.testObject.filmGenres.length; j < l; j++) {
-                          // console.log(object.filmGenres[i].id);
-                          if (this.mostRepeatedGenreId === this.testObject.filmGenres[j].id) {
-                            // console.log(object);
-                            this.testArr.push(this.testObject.filmId);
+                for (let id in this.filmsIdsOfFavouriteActor) {
+                  let actorFilmId = this.filmsIdsOfFavouriteActor[id];
+                  axios
+                      .get(`https://api.themoviedb.org/3/movie/${actorFilmId}?api_key=${storage.apiKey}&language=ru-RU`)
+                      .then((response) => {
+                        let testObject = {filmId: response.data.id, filmGenres: response.data.genres};
+                        // console.log(testObject);
+                        for (let j = 0, l = testObject.filmGenres.length; j < l; j++) {
+                          //console.log(testObject.filmGenres[j].id);
+                          if (this.mostRepeatedGenreId === testObject.filmGenres[j].id) {
+                            // console.log(testObject);
+                            this.testArr.push(testObject.filmId);
                             // console.log(this.testArr);
+                            //
+                            for (let k = 0; k < this.testArr.length; k++) {
+                              axios
+                                  .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
+                                  .then(response => {
+                                    //console.log(response.data);
+                                    this.testArr3.push(response.data);
+                                    // console.log(this.testArr3);
+
+                                    const arr = [
+                                      {place: "here",  name: "x", other: "other stuff1" },
+                                      {place: "there", name: "x", other: "other stuff2" },
+                                      {place: "here",  name: "y", other: "other stuff4" },
+                                      {place: "here",  name: "z", other: "other stuff5" }
+                                    ]
+
+                                    function getUniqueListBy(arr, key) {
+                                      return [...new Map(arr.map(item => [item[key], item])).values()]
+                                    }
+
+                                    this.testArr5 = getUniqueListBy(this.testArr3, 'id')
+                                    console.log(this.testArr5);
+                                    this.testArr5.push(this.testArr4);
+                                    // console.log("Unique by place")
+                                    // console.log(JSON.stringify(arr1))
+
+                                    // console.log("\nUnique by name")
+                                    // const arr2 = getUniqueListBy(arr, '')
+                                    //
+                                    // console.log(JSON.stringify(arr2))
+
+
+                                    // this.favouriteGenreWithActorFilms = array.filter(function (elem, pos) {
+                                    //   return array.indexOf(elem) === pos;
+                                    // });
+                                    // console.log(this.favouriteGenreWithActorFilms);
+                                    // this.testArr2.push(response.data);
+                                    // console.log(this.testArr2);
+                                    // array.push(this.favouriteGenreWithActorFilms);
+                                  }).catch(error => {
+                                console.log(error);
+                              });
+                            }
                           }
                         }
-                        console.log(this.testObject);
-                        console.log(this.testArr);
                       });
                 }
+
               }
-            }
+
           });
     },
 
