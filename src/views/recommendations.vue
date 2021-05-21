@@ -68,6 +68,27 @@
         </div>
       </div>
 
+      <div class="container mt-5">
+        <div class="row">
+          <h1 style="text-align: center; padding-top: 20px; margin-bottom: -10px;">
+            Рекомендуемые фильмы вашего любимого жанра с вашим любимым актером</h1>
+          <div class="col-md-12">
+            <ul class="list-group">
+              <ul class="movies__list">
+                <movies-list-item class="movies__item" v-for="movie in this.favouriteGenreWithActorFilms"
+                                  :movie="movie "></movies-list-item>
+              </ul>
+
+              <!--              <div class="movies__nav" v-if="showActorFilmsButton">-->
+              <!--                <button @click="loadMoreActorsFilms" class="button">Показать все</button>-->
+              <!--              </div>-->
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+      <!--this.favouriteGenreWithActorFilms-->
 
     </section>
   </div>
@@ -136,13 +157,15 @@ export default {
       outputFeaturedFilmsMovies: [],
       shortList: true,
       finalResult: [],
-
       genreMovies: [],
 
       //-----
       showActorFilmsButton: true,
       showFeaturedFilmsButton: true,
 
+      //-----
+      favouriteGenreWithActorFilms: [],
+      testArr: []
 
     };
   },
@@ -362,17 +385,40 @@ export default {
                                         let object = {filmId: response.data.id, filmGenres: response.data.genres};
                                         // console.log(response.data);
                                         // console.log(response.data.genres);
-                                        console.log(object);
-                                        for(let i = 0, l = object.filmGenres.length; i < l; i++) {
+
+                                        for (let j = 0, l = object.filmGenres.length; j < l; j++) {
                                           // console.log(object.filmGenres[i].id);
-                                          if(this.mostRepeatedGenreId === object.filmGenres[i].id ){
-                                            console.log(object.filmId);
+
+                                          if (this.mostRepeatedGenreId === object.filmGenres[j].id) {
+                                            console.log(object);
+                                            this.testArr.push(object.filmId);
+                                            console.log(this.testArr);
+
+                                            for(let k=0; k < this.testArr.length; k++){
+                                              axios
+                                                  .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
+                                                  .then(response => {
+                                                    console.log(response.data);
+
+                                                    // let filteredArr = [];
+                                                    // filteredArr.push(response.data);
+                                                    // console.log(filteredArr);
+                                                    this.favouriteGenreWithActorFilms.push(response.data);
+                                                  }).catch(error => {
+                                                console.log(error);
+                                              });
+                                            }
                                           }
+
                                         }
                                       }).catch(error => {
                                     console.log(error);
-                                  })
+                                  });
+
+
+
                                 }
+
                               }
                             }).catch(error => {
                           console.log(error);
@@ -471,17 +517,9 @@ export default {
             console.log(error);
           }
       );
-    }
-    ,
+    },
 
-    logUserOut() {
-      localStorage.removeItem("jwt");
-      localStorage.clear();
-      this.$router.push("/login");
-      document.location.reload();
-    }
-  }
-  ,
+  },
 }
 ;
 </script>
