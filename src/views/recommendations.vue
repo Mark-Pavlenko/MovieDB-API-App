@@ -75,7 +75,7 @@
           <div class="col-md-12">
             <ul class="list-group">
               <ul class="movies__list">
-                <movies-list-item class="movies__item" v-for="movie in this.testArr3"
+                <movies-list-item class="movies__item" v-for="movie in this.favouriteGenreWithActorFilms"
                                   :movie="movie "></movies-list-item>
               </ul>
 
@@ -415,6 +415,7 @@ export default {
                                   .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
                                   .then(response => {
                                     //console.log(response.data);
+                                    
                                     this.testArr2.push(response.data);
                                     // console.log(this.testArr3);
 
@@ -422,9 +423,10 @@ export default {
                                       return [...new Map(arr.map(item => [item[key], item])).values()]
                                     }
 
-                                    this.testArr3 = getUniqueListBy(this.testArr2, 'id')
-                                    console.log(this.testArr3);
-                                    this.testArr3.push(this.favouriteGenreWithActorFilms);
+                                    this.favouriteGenreWithActorFilms = getUniqueListBy(this.testArr2, 'id')
+                                    console.log(this.favouriteGenreWithActorFilms);
+
+
                                     // console.log(this.favouriteGenreWithActorFilms);
                                     // console.log("Unique by place")
                                     // console.log(JSON.stringify(arr1))
