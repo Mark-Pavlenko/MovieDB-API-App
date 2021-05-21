@@ -176,79 +176,12 @@ export default {
   },
 
   mounted() {
-    if (localStorage.getItem('reloaded')) {
-      localStorage.removeItem('reloaded');
-    } else {
-      localStorage.setItem('reloaded', '1');
-      location.reload();
-    }
-    ;
 
-    //get movie rating for special user
-    axios.get(`http://localhost:4000/user/allUsers`)
-        .then(response => {
-          this.users = response.data;
-          for (let i = 0; i < this.users.length; i++) {
-            if (`"${this.users[i].name}"` === localStorage.userName) {
-              for (let j = 0; j < this.users[i].ratingFilms.length; j++) {
-                if (this.users[i].ratingFilms[j].filmId === this.filmId) {
-                  this.rating = this.users[i].ratingFilms[j].filmRating;
-                  return this.rating;
-                }
-              }
-            }
-          }
-        });
+    //get movie rating
+    this.getMovieRating();
 
-    //get the id`s array of recommended films for user (except the repeated)
-    //get the id`s array of favourite actors of the user
-    axios.get(`http://localhost:4000/user/allUsers`)
-        .then(response => {
-          let users = response.data;
-          // console.log(response.data);
-
-          //get featuredFilms and featuredUserFilms arrays
-          for (let i = 0; i < users.length; i++) {
-            if (`"${this.users[i].name}"` === localStorage.userName) {
-
-              //get featuredUserFilms arrays
-              for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
-                this.featuredUserFilms.push(this.users[i].featuredFilms[j].filmId);
-              }
-
-              //get favouriteActors array of IDs for specific User
-              for (let j = 0; j < this.users[i].favouriteActors.length; j++) {
-                this.favouriteActorIds.push(this.users[i].favouriteActors[j].actorId);
-                // console.log(this.favouriteActorIds)
-              }
-
-            } else {
-              //get featuredFilms  arrays
-              for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
-                this.featuredFilms.push(this.users[i].featuredFilms[j].filmId);
-              }
-            }
-          }
-
-          // console.log(this.featuredFilms);
-          // console.log(this.featuredUserFilms);
-          let array = this.featuredFilms;
-          this.recommendedFeaturedFilms = array.filter(function (elem, pos) {
-            return array.indexOf(elem) === pos;
-          });
-          // console.log(this.recommendedFeaturedFilms);
-          for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
-            // console.log(this.recommendedFeaturedFilms[i]);
-            axios
-                .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
-                .then((response) => {
-                  this.outputRecommendedFeaturedFilms.push(response.data);
-                  this.outputFeaturedFilmsMovies = this.outputRecommendedFeaturedFilms.slice(0, 10);
-                  this.listFeaturedFilmsLoaded = true;
-                });
-          }
-          // console.log(this.outputRecommendedFeaturedFilms);
-        });
+    //get recommended films
+    this.getRecommendedFeaturedFilms();
 
     //get the recommendations of films by the most popular genre`s ID
     //get the recommendations of films by the most popular favourite actor`s ID
@@ -356,8 +289,8 @@ export default {
                       }
 
                       console.log('////////////////////////////////////////////')
-                      console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
-                      console.log('The most repeated actor Id: ' + this.mostRepeatedActorId);
+                      // console.log('The most popular user`s genre Id: ' + this.mostRepeatedGenreId);
+                      // console.log('The most repeated actor Id: ' + this.mostRepeatedActorId);
                       //put into vue component films with the most popular genre id
                       if (this.mostRepeatedGenreId && this.mostRepeatedActorId) {
 
@@ -390,39 +323,43 @@ export default {
                                           // console.log(object.filmGenres[i].id);
 
                                           if (this.mostRepeatedGenreId === object.filmGenres[j].id) {
-                                            console.log(object);
+                                            // console.log(object);
                                             this.testArr.push(object.filmId);
-                                            console.log(this.testArr);
-
-                                            for(let k=0; k < this.testArr.length; k++){
-                                              axios
-                                                  .get(`https://api.themoviedb.org/3/movie/${this.testArr[k]}?api_key=${storage.apiKey}&language=ru-RU`)
-                                                  .then(response => {
-                                                    console.log(response.data);
-
-                                                    // let filteredArr = [];
-                                                    // filteredArr.push(response.data);
-                                                    // console.log(filteredArr);
-                                                    this.favouriteGenreWithActorFilms.push(response.data);
-                                                  }).catch(error => {
-                                                console.log(error);
-                                              });
-                                            }
+                                            // console.log(this.testArr);
                                           }
-
                                         }
+
+                                        // console.log(this.testArr);
+
                                       }).catch(error => {
                                     console.log(error);
                                   });
 
+                                }
+                              }
 
+                              console.log(this.testArr);
+                              setTimeout(() => {
+                                console.log(this.testArr.length);
+                                for (let film = 0;film <= this.testArr.length; film++) {
+                                  // let filmId = this.testArr[film];
+                                  console.log(film);
+                                  axios
+                                      .get(`https://api.themoviedb.org/3/movie/${film}?api_key=${storage.apiKey}&language=ru-RU`)
+                                      .then(response => {
+                                        console.log(response.data);
+
+                                        // let filteredArr = [];
+                                        // filteredArr.push(response.data);
+                                        // console.log(filteredArr);
+                                        this.favouriteGenreWithActorFilms.push(response.data);
+                                      }).catch(error => {
+                                    console.log(error);
+                                  });
 
                                 }
+                              })},1000)
 
-                              }
-                            }).catch(error => {
-                          console.log(error);
-                        })
                       }
                     });
 
@@ -432,6 +369,78 @@ export default {
   },
 
   methods: {
+
+    //get film rating
+    getMovieRating(){
+      //get movie rating for special user
+      axios.get(`http://localhost:4000/user/allUsers`)
+          .then(response => {
+            this.users = response.data;
+            for (let i = 0; i < this.users.length; i++) {
+              if (`"${this.users[i].name}"` === localStorage.userName) {
+                for (let j = 0; j < this.users[i].ratingFilms.length; j++) {
+                  if (this.users[i].ratingFilms[j].filmId === this.filmId) {
+                    this.rating = this.users[i].ratingFilms[j].filmRating;
+                    return this.rating;
+                  }
+                }
+              }
+            }
+          });
+    },
+
+    //get Recommended User Featured Films
+    getRecommendedFeaturedFilms(){
+      //get the id`s array of recommended films for user (except the repeated)
+      //get the id`s array of favourite actors of the user
+      axios.get(`http://localhost:4000/user/allUsers`)
+          .then(response => {
+            let users = response.data;
+            // console.log(response.data);
+
+            //get featuredFilms and featuredUserFilms arrays
+            for (let i = 0; i < users.length; i++) {
+              if (`"${this.users[i].name}"` === localStorage.userName) {
+
+                //get featuredUserFilms arrays
+                for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
+                  this.featuredUserFilms.push(this.users[i].featuredFilms[j].filmId);
+                }
+
+                //get favouriteActors array of IDs for specific User
+                for (let j = 0; j < this.users[i].favouriteActors.length; j++) {
+                  this.favouriteActorIds.push(this.users[i].favouriteActors[j].actorId);
+                  // console.log(this.favouriteActorIds)
+                }
+
+              } else {
+                //get featuredFilms  arrays
+                for (let j = 0; j < this.users[i].featuredFilms.length; j++) {
+                  this.featuredFilms.push(this.users[i].featuredFilms[j].filmId);
+                }
+              }
+            }
+
+            // console.log(this.featuredFilms);
+            // console.log(this.featuredUserFilms);
+            let array = this.featuredFilms;
+            this.recommendedFeaturedFilms = array.filter(function (elem, pos) {
+              return array.indexOf(elem) === pos;
+            });
+            // console.log(this.recommendedFeaturedFilms);
+            for (let i = 0; i < this.recommendedFeaturedFilms.length; i++) {
+              // console.log(this.recommendedFeaturedFilms[i]);
+              axios
+                  .get(`https://api.themoviedb.org/3/movie/${this.recommendedFeaturedFilms[i]}?api_key=${storage.apiKey}&language=ru`)
+                  .then((response) => {
+                    this.outputRecommendedFeaturedFilms.push(response.data);
+                    this.outputFeaturedFilmsMovies = this.outputRecommendedFeaturedFilms.slice(0, 10);
+                    this.listFeaturedFilmsLoaded = true;
+                  });
+            }
+            // console.log(this.outputRecommendedFeaturedFilms);
+          });
+    },
 
     //get more films
     loadMoreFeaturedFilms() {
