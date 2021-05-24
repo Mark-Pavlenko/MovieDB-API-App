@@ -105,9 +105,9 @@ exports.removeFavouriteFilm = async (req, res) => {
 exports.addRating = async (req, res) => {
     try {
         const {userId, filmId, filmRating} = req.body;
-        // console.log(userId);
-        // console.log(filmId);
-        // console.log(filmRating);
+        console.log(userId);
+        console.log(filmId);
+        console.log(filmRating);
 
         //fix this
         let ratingUser = await User.findById(userId);

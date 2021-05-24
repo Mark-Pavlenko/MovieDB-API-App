@@ -252,7 +252,6 @@ export default {
         console.log(userId);
         console.log(filmId);
         console.log(rating);
-
         if (this.rating >= 4) {
           await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
             filmRating: this.rating,
@@ -262,15 +261,13 @@ export default {
               .then(response => {
                 console.log(response.data)
               });
-
-          await this.$http.put(`/user/addFeaturedFilm/${filmId}/${rating}`, {
+          axios.put(`/user/addFeaturedFilm/${filmId}/${rating}`, {
             filmRating: this.rating,
             filmId: this.filmId,
             userId
           }).then(response => {
             console.log(response.data)
           });
-
           await swal("Ура!", "\n" + "Рейтинг был успешно поставлен фильму.", "success");
         } else {
           await this.$http.put(`/user/clickStarRating/${filmId}/${rating}`, {
@@ -331,7 +328,6 @@ export default {
                   }
                   else{
                     this.isInFavourite = false;
-                    console.log('not in favourite!');
                     console.log(this.isInFavourite);
                   }
                 }
