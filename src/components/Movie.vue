@@ -261,7 +261,7 @@ export default {
               .then(response => {
                 console.log(response.data)
               });
-          axios.put(`/user/addFeaturedFilm/${filmId}/${rating}`, {
+          await this.$http.put(`/user/addFeaturedFilm/${filmId}/${rating}`, {
             filmRating: this.rating,
             filmId: this.filmId,
             userId

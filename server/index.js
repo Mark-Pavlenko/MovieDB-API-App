@@ -31,8 +31,6 @@ app.use(morgan("dev")); // configire morgan
 const userRoutes = require("./api/user/route/user"); //bring in our user routes
 app.use("/user", userRoutes);
 
-
-
 app.listen(PORT, () => {
   console.log(`App is running on ${PORT}`);
 });
