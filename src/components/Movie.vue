@@ -25,6 +25,8 @@
         <div class="movie__wrap movie__wrap--main" :class="{'movie__wrap--page': type === 'page'}">
           <div class="movie__actions" v-if="user">
 
+            <h3 v-if="isInFavourite == true" class="movie__actions-link" style=" color: black; margin-top: -5px;">Отмеченно как избранное</h3>
+
             <star-rating
                 class="movie__actions-link"
                 :increment="0.01" :fixed-points="2"
@@ -33,21 +35,18 @@
                 @click="clickStarRating(clickStarRating)"
             />
 
-            <div class="movie__actions-link" :class="{'active' : favorite === true}"
-                 @click="addFilm(filmId)">
-              <span class="movie__actions-text">Отметить как Избранное?</span>
-            </div>
 
-            <div class="movie__actions-link" :class="{'active' : favorite === true}"
-                 @click="removeFilm(filmId)">
+            <div class="movie__actions-link" @click="removeFilm(filmId)" v-if="isInFavourite == true">
+
               <span class="movie__actions-text">Удалить из избранного?</span>
             </div>
 
-            <!-- check if film is in favourite -->
-            <!--            <div class="movie__actions-link" :class="{'active' : favorite === true}"-->
-            <!--                 @click="isFilmInFavourite(id)">-->
-            <!--              <span class="movie__actions-text">film`s id</span>-->
-            <!--            </div>-->
+<!--            <div class="movie__actions-link" @click="addFilm(filmId)" >-->
+            <div class="movie__actions-link" @click="addFilm(filmId)" v-else>
+              <span class="movie__actions-text" >Отметить как Избранное?</span>
+            </div>
+
+
 
           </div>
           <div class="movie__info">
@@ -149,6 +148,7 @@ export default {
       user: '',
       filmId: this.id,
       rating: this.rating,
+      isInFavourite: this.isInFavourite
 
     }
   },
@@ -177,8 +177,20 @@ export default {
             }
           }
         });
+
+    this.isFilmInFavourite(this.filmId);
+
   },
   methods: {
+    reloadPage(){
+      if (localStorage.getItem('reloaded')) {
+        localStorage.removeItem('reloaded');
+      } else {
+        localStorage.setItem('reloaded', '1');
+        location.reload();
+      };
+    },
+
     //add film to the db
     async addFilm(filmId) {
       try {
@@ -192,7 +204,7 @@ export default {
               console.log(response)
             })
         swal("Ура!", "\n" + "Фильм был успешно добавлен в избранное.", "success");
-        // this.$router.push("/profile");
+        this.reloadPage()
       } catch (err) {
         let error = err.response;
         console.log(error);
@@ -293,7 +305,7 @@ export default {
               console.log(response)
             })
         swal("Ура!", "\n" + "Фильм был успешно удален из избранных!.", "success");
-        // this.$router.push("/profile");
+          location.reload();
       } catch (err) {
         let error = err.response;
         console.log(error);
@@ -306,14 +318,26 @@ export default {
 
       console.log(`Film's id: ${filmId}`);
 
-      for (let i = 0; i < favouriteFilmId.length; i++) {
-        console.log(`All favourite film's ids: ${favouriteFilmId[i].film}`);
-        if (favouriteFilmId[i].film.includes(filmId)) {
-          console.log('Includes');
-        } else {
-          console.log('Not Includes');
-        }
-      }
+      axios.get(`http://localhost:4000/user/allUsers`)
+          .then(response => {
+            this.users = response.data;
+            for (let i = 0; i < this.users.length; i++) {
+              if (`"${this.users[i].name}"` === localStorage.userName) {
+                for (let j = 0; j < this.users[i].favouriteFilms.length; j++) {
+                  if (this.users[i].favouriteFilms[j].filmId === this.filmId) {
+                    this.isInFavourite = true;
+                    console.log('in favourite!');
+                    console.log(this.isInFavourite);
+                  }
+                  else{
+                    this.isInFavourite = false;
+                    console.log('not in favourite!');
+                    console.log(this.isInFavourite);
+                  }
+                }
+              }
+            }
+          });
     },
 
     //output movie
@@ -352,6 +376,7 @@ export default {
             this.$router.push({name: 'home-category'});
           }.bind(this));
     },
+
     poster() {
       if (this.movie.poster_path) {
         this.moviePosterSrc = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2' + this.movie.poster_path;
@@ -369,22 +394,23 @@ export default {
       if (this.movie.backdrop_path) {
         this.movieBackdropSrc = 'https://image.tmdb.org/t/p/w500' + this.movie.backdrop_path;
       }
-    }
-    ,
+    },
+
     actorBackdrop() {
       if (this.actor.profile_path) {
         this.actorBackdropSrc = 'https://image.tmdb.org/t/p/w500' + this.movie.profile_path;
       }
-    }
-    ,
+    },
+
     nestedDataToString(data) {
       let nestedArray = [], resultString;
       data.forEach((item) => nestedArray.push(item.name));
       resultString = nestedArray.join(', ');
       return resultString;
-    }
-  }
-  ,
+    },
+
+
+  },
   watch: {
     id: function (val) {
       this.fetchMovie(val);
@@ -532,7 +558,7 @@ export default {
     }
 
     &-link {
-      display: flex;
+      display: block;
       align-items: center;
       text-decoration: none;
       text-transform: uppercase;
@@ -651,6 +677,10 @@ export default {
       padding: 130px 0px 40px 50px;
       border-top: 0;
     }
+  }
+
+  .movie__actions-text{
+    cursor: pointer;
   }
 }
 </style>
